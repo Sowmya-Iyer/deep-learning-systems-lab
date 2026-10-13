@@ -1,84 +1,104 @@
-"""Tests that verify the results printed by tensor_operations.py.
+"""Tensor operations: arithmetic, element-wise vs matrix multiplication, and timing.
 
-Run from this folder with the virtual environment active:
+Run with the virtual environment active:
 
-    pytest -v test_tensor_operations.py
+    python tensor_operations.py
 """
 
-import pytest
+import time
+
 import torch
 
-from tensor_operations import dot_by_hand
+
+def dot_by_hand(tensor):
+    """Multiply a 1-D tensor by itself and sum the results, using a Python loop.
+
+    This gives the same answer as torch.matmul(tensor, tensor). It exists only
+    to show how much slower a loop is; use torch.matmul in real code.
+    """
+    value = 0
+    for i in range(len(tensor)):
+        value += tensor[i] * tensor[i]
+    return value
 
 
-@pytest.fixture
-def tensor():
-    return torch.tensor([1, 2, 3])
+def basic_operations():
+    print("=== Basic operations ===")
+    tensor = torch.tensor([1, 2, 3])
+    print(f"tensor:               {tensor}")
 
+    # Arithmetic with a number applies to every element.
+    print(f"tensor + 10:          {tensor + 10}")
+    print(f"tensor * 10:          {tensor * 10}")
 
-# --- Basic operations -------------------------------------------------------
+    # Neither line above changed the tensor: operations return a new tensor.
+    print(f"tensor (unchanged):   {tensor}")
 
-
-def test_add_number(tensor):
-    assert (tensor + 10).tolist() == [11, 12, 13]
-
-
-def test_multiply_by_number(tensor):
-    assert (tensor * 10).tolist() == [10, 20, 30]
-
-
-def test_operations_do_not_change_the_original(tensor):
-    tensor + 10
-    tensor * 10
-    torch.multiply(tensor, 10)
-    assert tensor.tolist() == [1, 2, 3]
-
-
-def test_subtract_then_add_with_reassignment(tensor):
+    # To keep a result, assign it back to the variable.
     tensor = tensor - 10
-    assert tensor.tolist() == [-9, -8, -7]
+    print(f"after tensor - 10:    {tensor}")
     tensor = tensor + 10
-    assert tensor.tolist() == [1, 2, 3]
+    print(f"after tensor + 10:    {tensor}")
+
+    # The same operations exist as functions. The operators are more common.
+    print(f"torch.multiply(t, 10): {torch.multiply(tensor, 10)}")
+    print(f"torch.add(t, 10):      {torch.add(tensor, 10)}")
+    print(f"tensor (unchanged):    {tensor}")
+
+    # Tensor * tensor is element-wise: index 0 with 0, 1 with 1, 2 with 2.
+    print(f"{tensor} * {tensor} = {tensor * tensor}")
+    print()
 
 
-def test_functions_match_operators(tensor):
-    assert torch.equal(torch.multiply(tensor, 10), tensor * 10)
-    assert torch.equal(torch.add(tensor, 10), tensor + 10)
+def matrix_multiplication():
+    print("=== Matrix multiplication ===")
+    tensor = torch.tensor([1, 2, 3])
+    print(f"tensor: {tensor}, shape: {tensor.shape}")
+
+    # Element-wise multiplies matching positions:      [1*1, 2*2, 3*3] = [1, 4, 9]
+    # Matrix multiplication also adds them together:    1*1 + 2*2 + 3*3 = 14
+    print(f"element-wise, tensor * tensor:       {tensor * tensor}")
+    print(f"matrix, torch.matmul(tensor, tensor): {torch.matmul(tensor, tensor)!r}")
+    print(f"matrix, tensor @ tensor:              {(tensor @ tensor)!r}")
+    print()
+
+    # Rule 1: the inner dimensions must match.
+    # Rule 2: the result has the shape of the outer dimensions.
+    a = torch.rand(2, 3)
+    b = torch.rand(3, 2)
+    print("=== Shape rules ===")
+    print(f"(2, 3) @ (3, 2) -> {tuple((a @ b).shape)}")
+    print(f"(3, 2) @ (2, 3) -> {tuple((b @ a).shape)}")
+    try:
+        b @ b
+    except RuntimeError as error:
+        print(f"(3, 2) @ (3, 2) -> fails: {error}")
+    print()
 
 
-def test_elementwise_multiplication(tensor):
-    assert (tensor * tensor).tolist() == [1, 4, 9]
+def timing_comparison():
+    print("=== Loop vs torch.matmul ===")
+    # A larger tensor than [1, 2, 3], so the difference is measurable.
+    tensor = torch.rand(10_000)
+
+    start = time.perf_counter()
+    by_hand = dot_by_hand(tensor)
+    loop_seconds = time.perf_counter() - start
+
+    start = time.perf_counter()
+    built_in = torch.matmul(tensor, tensor)
+    matmul_seconds = time.perf_counter() - start
+
+    print(f"loop:         {by_hand:.4f} in {loop_seconds * 1000:.3f} ms")
+    print(f"torch.matmul: {built_in:.4f} in {matmul_seconds * 1000:.3f} ms")
+    print(f"torch.matmul was about {loop_seconds / matmul_seconds:,.0f}x faster")
 
 
-# --- Matrix multiplication --------------------------------------------------
+def main():
+    basic_operations()
+    matrix_multiplication()
+    timing_comparison()
 
 
-def test_matmul_of_vector_with_itself(tensor):
-    result = torch.matmul(tensor, tensor)
-    assert result.ndim == 0
-    assert result.item() == 14
-
-
-def test_at_operator_matches_matmul(tensor):
-    assert torch.equal(tensor @ tensor, torch.matmul(tensor, tensor))
-
-
-def test_loop_matches_matmul(tensor):
-    assert dot_by_hand(tensor).item() == torch.matmul(tensor, tensor).item()
-
-
-@pytest.mark.parametrize(
-    "left, right, expected",
-    [
-        ((2, 3), (3, 2), (2, 2)),
-        ((3, 2), (2, 3), (3, 3)),
-    ],
-)
-def test_matmul_result_has_outer_dimensions(left, right, expected):
-    result = torch.rand(left) @ torch.rand(right)
-    assert result.shape == expected
-
-
-def test_matmul_fails_when_inner_dimensions_differ():
-    with pytest.raises(RuntimeError):
-        torch.rand(3, 2) @ torch.rand(3, 2)
+if __name__ == "__main__":
+    main()
