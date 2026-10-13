@@ -421,3 +421,4 @@ It is to understand **why the systems behave the way they do** — from CUDA mem
 🚧 **Active — 24-week study and engineering program**
 
 Individual modules contain their own README files with implementation details, experiments, results, and lessons learned.
+>>>>>>> origin/main
