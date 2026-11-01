@@ -1,45 +1,43 @@
 # video-sensor
 
-Learned localization, factor-graph estimation and multimodal fusion for [Project 3](../../PROJECTS.md). Week 13 setup, weeks 14-16 bounded experiments, week 18 report.
+Learned visual measurements and trust modeling for [Project 3](../../PROJECTS.md). Week 13 setup, weeks 14-15 experiments, week 17 trust model, week 18 report.
 
 ## Layout
 
 ```
 video-sensor/
 ├── alignment/      # timestamps, sync and split code
-├── classical/      # ORB reference matching and EKF baseline
-├── learned/        # place recognition and feature matching
-├── graph/          # sliding-window factor graph with GTSAM
-├── fusion/         # cross-attention reliability model on cached features
-├── experiments/    # blur, low texture, wheel slip, dropouts, time offsets
+├── classical/      # baseline from existing components, with a fixed EKF
+├── learned/        # one learned matching or place-recognition component
+├── trust/          # cross-attention trust model on cached features
+├── experiments/    # blur, visual dropout, time offsets, odometry corruption
 └── configs/
 ```
 
 ## Protocol
 
 - Use the dataset chosen in the [data audit](../../reports/data-audit.md). No new data collection.
-- Rebuild the classical baseline from published methods. Do not use employer code or parameters.
-- Change one thing at a time: vision input, then estimator, then learned trust.
-- Run all four versions on the same routes and tests.
-- Keep tuning and evaluation route segments separate, and train the fusion model only on tuning segments.
-- If no usable odometry exists, simulate it from ground-truth poses with documented noise.
+- Establish reference-pose quality first, and describe reference poses by how they were produced.
+- Use existing components for the baseline. Do not use employer code or parameters.
+- Keep the EKF fixed, and change one thing at a time.
+- Keep tuning and evaluation route segments separate, and train the trust model only on tuning segments.
+- Label injected wheel slip, delay and dropout as simulated.
 
 | Version | Vision input | State estimator | Trust in vision |
 | ------- | ------------ | --------------- | --------------- |
-| Classical | ORB | EKF | Fixed |
-| Learned front end | Learned matching | EKF | Fixed |
-| Upgraded back end | Learned matching | Factor graph | Fixed, with outlier rejection |
-| Full system | Learned matching | Factor graph | Predicted by cross-attention |
+| Classical | Classical matching | EKF | Fixed |
+| Learned measurement | Learned component | EKF | Fixed |
+| Learned trust | Learned component | EKF | Predicted by cross-attention |
 
 ## Done when
 
 - [ ] Camera and odometry timestamps are aligned and checked
-- [ ] All four versions are compared with the same protocol
-- [ ] Repeated-aisle false matches are tested directly
-- [ ] Robustness is measured under blur, low texture, wheel slip, dropouts and time offsets
+- [ ] Classical and learned versions are compared with the same protocol
+- [ ] Robustness is measured under blur, visual dropout, time offsets and odometry corruption
 - [ ] Pose error, lost-localization rate, recovery time and runtime are reported
-- [ ] The report explains what each change contributed, and where it helps, fails or learns shortcuts
+- [ ] The trust model is compared with fixed trust, or dropped with a reason if the baseline was not working by week 16
+- [ ] The report explains where each version helps, fails or learns shortcuts
 
-An EKF beside the graph for fast output, and a particle filter for global localization, are extensions.
+A factor graph, a particle filter and fusing aisle labels are extensions.
 
 Results go in the [Project 3 report](../../reports/project-3-video-sensor/report.md).

@@ -1,21 +1,22 @@
 # Data audit
 
-Weeks 1-2. Confirm these facts from each dataset's own page before writing model code. The notes below are starting points, not verified facts.
+Week 3, bounded to a few hours. Confirm these facts from each dataset's own page before writing model code. The notes are starting points, not verified facts.
 
-| Dataset | Used for | Check first | Sensors | Ground truth | License | Size | Decision |
-| ------- | -------- | ----------- | ------- | ------------ | ------- | ---: | -------- |
-| [LOCO](https://github.com/tum-fml/loco) | Projects 1, 2 | Forklift annotation count | — | — | — | — | — |
-| [Fraunhofer Industry](https://arxiv.org/pdf/1912.08263) | Projects 3, 5 | Is odometry or IMU included? Is overlap enough for SfM? | — | — | — | — | — |
-| [TorWIC warehouse extension](https://arxiv.org/pdf/2307.00488) | Projects 3, 5 | Sensor mount, odometry, IMU | — | — | — | — | — |
-| [SDG-Warehouse](https://arxiv.org/pdf/2606.02800) | Project 5 extension | License, access, depth output | — | — | — | — | — |
-| [PhysicalAI-SmartSpaces](https://docs.rcac.purdue.edu/datasets/ai/PhysicalAI-SmartSpaces/) | Project 5 extension | Forklift coverage | — | — | — | — | — |
-| [SimReady Warehouse](https://hyper.ai/en/datasets/nvidia-physical-ai-simready-warehouse-openusd) | Projects 4, 5 | Can it render labels and depth? | — | — | — | — | — |
+| Dataset | Used for | Check first | Notes so far | License | Size | Decision |
+| ------- | -------- | ----------- | ------------ | ------- | ---: | -------- |
+| [LOCO](https://github.com/tum-fml/loco) | Projects 1, 2 | Class counts, split unit, unannotated images | Forklift annotations are few, so audit before choosing classes | — | — | — |
+| [TorWIC](https://arxiv.org/pdf/2205.01202) | Project 3 | Is reference-pose quality usable? | Has RGB-D, wheel encoder and IMU. Reference poses come from proprietary LiDAR SLAM | — | — | — |
+| [TorWIC extension](https://arxiv.org/pdf/2307.00488) | Project 3 | Is wheel odometry included? | Its authors report jumps and drifts in the original ground truth; this release uses a multistation scan | — | — | — |
+| [Fraunhofer Industry](https://arxiv.org/pdf/1912.08263) | Project 3 | Are synchronized odometry or IMU streams available? | Forklift-mounted cameras with precise labeled poses | — | — | — |
+| [SimReady Warehouse](https://hyper.ai/en/datasets/nvidia-physical-ai-simready-warehouse-openusd) | Project 4 | Can it render readable labels? | Synthetic 3D assets | — | — | — |
 
 ## Decisions
 
+- **Project 1 and 2 classes and split unit:** —
 - **Project 3 dataset:** —
+- **Project 3 reference-pose description:** —
 - **Odometry source:** real or simulated, with reason —
-- **Project 4 label source:** —
-- **Project 5 sequence:** —
+- **Project 4 synthetic label source:** —
+- **Project 4 real-image holdout source:** —
 
-If no dataset has usable odometry, Project 3 simulates it from ground-truth poses. Record the noise model here and in the report.
+If no dataset has usable odometry, Project 3 simulates it from reference poses. Record the noise model here and in the report.

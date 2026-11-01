@@ -1,6 +1,6 @@
 # Project 4: Aisle and Rack Label Reading
 
-**Research question.** Can parameter-efficient adaptation read aisle and rack labels better than an OCR baseline while preserving quality on a broader holdout?
+**Research question.** Can LoRA adaptation read aisle and rack labels better than OCR and a pretrained VLM while preserving quality on unseen strings, layouts and real images?
 
 ## Summary
 
@@ -18,9 +18,11 @@ Dataset, splits, models compared, and what was held constant.
 
 ## Results
 
-| Config | Exact-match accuracy | General-holdout quality | Hallucinated labels | Trainable parameters | Peak memory | Training time |
-| ------ | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | — | — |
+| Config | Field exact match | Record exact match | Character error rate | Schema validity | Abstention quality | Hallucinated labels | Real-image holdout | Peak memory |
+| ------ | --- | --- | --- | --- | --- | --- | --- | --- |
+| OCR + parsing | — | — | — | — | — | — | — | — |
+| Pretrained VLM | — | — | — | — | — | — | — | — |
+| LoRA VLM | — | — | — | — | — | — | — | — |
 
 ## Analysis
 
@@ -39,6 +41,7 @@ Commands and configs that regenerate the tables above.
 Questions to answer without notes:
 
 - How do you know the model uses the image?
-- What did adaptation regress on the general holdout?
-- Why this adaptation method and parameter count?
+- Why is valid JSON not a correct reading?
+- What did adaptation regress on unseen data?
+- What do synthetic-only results not show?
 - Why is a hallucinated label a localization failure?

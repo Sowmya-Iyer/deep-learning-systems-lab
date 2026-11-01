@@ -1,6 +1,6 @@
-# Project 3: Learned Forklift Localization
+# Project 3: Robust Warehouse Localization with Learned Visual Measurements
 
-**Research question.** When do learned measurements and a factor graph improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned?
+**Research question.** Can a learned matching or relocalization component improve a fixed localization pipeline under visual degradation and sensor misalignment?
 
 ## Summary
 
@@ -18,12 +18,11 @@ Dataset, splits, models compared, and what was held constant.
 
 ## Results
 
-| Config | Pose error | Lost-localization rate | Recovery time | Blur | Wheel slip | Dropouts | Time offset | Runtime per frame |
+| Config | Pose error | Lost-localization rate | Recovery time | Blur | Visual dropout | Time offset | Odometry corruption | Runtime per frame |
 | ------ | --- | --- | --- | --- | --- | --- | --- | --- |
-| Classical: ORB + EKF | — | — | — | — | — | — | — | — |
-| Learned front end: learned matching + EKF | — | — | — | — | — | — | — | — |
-| Upgraded back end: learned matching + factor graph | — | — | — | — | — | — | — | — |
-| Full system: factor graph + predicted trust | — | — | — | — | — | — | — | — |
+| Classical + EKF | — | — | — | — | — | — | — | — |
+| Learned measurement + EKF | — | — | — | — | — | — | — | — |
+| Learned trust + EKF | — | — | — | — | — | — | — | — |
 
 ## Analysis
 
@@ -42,7 +41,7 @@ Commands and configs that regenerate the tables above.
 Questions to answer without notes:
 
 - How were camera and odometry aligned, and how was that checked?
-- Why does an EKF struggle with repeated aisles, and did the factor graph fix that?
-- How does predicted reliability become a noise model, and is it calibrated?
-- When does the system trust vision, and when odometry?
-- What did each change contribute, and where did it fail or learn shortcuts?
+- How were reference poses produced, and how far can they be trusted?
+- Which results come from simulated corruption?
+- How does predicted trust become a noise value, and is it calibrated?
+- Where does each version help, fail or learn shortcuts?

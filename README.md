@@ -1,11 +1,11 @@
 # deep-learning-systems-lab
-Hands-on implementations and experiments in PyTorch, vision transformers, distributed training, self-supervised learning, multimodal perception and 3D vision, applied to forklift perception in warehouses.
+Hands-on implementations and experiments in PyTorch, vision transformers, self-supervised learning, multimodal perception and distributed training, applied to warehouse perception.
 
 This repository documents a structured 24-week progression through:
 
-**PyTorch → Transformers → Self-Supervised Learning → Learned Localization → Vision-Language → 3D Vision → Distributed Training → Deployment**
+**PyTorch → Transformers → Self-Supervised Learning → Learned Localization → Vision-Language → Distributed Training → Interview Readiness**
 
-Each stage replaces or extends a classical perception method, then measures whether the learned approach is actually better. The goal is to understand how modern vision models are **implemented, trained, scaled, optimized, and deployed in real-world perception systems**.
+Each study applies a modern training technique to a real warehouse problem, then measures whether it beats a simpler baseline. The goal is to understand how modern vision models are **implemented, trained, scaled, and evaluated honestly**.
 
 ---
 
@@ -15,43 +15,41 @@ By the end of this lab, I aim to be able to:
 
 * Write production-quality training pipelines in native PyTorch
 * Implement Transformer and Vision Transformer components from first principles
+* Design controlled experiments, with fair baselines, seeds and honest claims
 * Reduce labeling needs through self-supervised pretraining
-* Improve visual localization with learned measurements, factor-graph estimation and cross-attention fusion
+* Improve visual localization with learned measurements and cross-attention trust modeling
 * Adapt a small vision-language model to read warehouse labels without hallucinating
-* Implement multi-view geometry, Structure from Motion and bundle adjustment
-* Reconstruct warehouse scenes with 3D Gaussian Splatting
-* Train depth and occupancy models for scene awareness
 * Train across multiple GPUs using DDP, and diagnose memory and data-loading bottlenecks
-* Deploy a quantized model and measure its latency
 
 ---
 
 ## 🗺️ Roadmap
 
-| Weeks | Phase | Main work | Compute | Finished when |
-| ----: | ----- | --------- | ------- | ------------- |
-| 01–02 | Foundations and data audit | Finish tensors and autograd; check sensors, licenses and ground truth for each dataset | Laptop | [Data audit](reports/data-audit.md) is complete |
-| 03–04 | Training pipeline | Configs, checkpoints and resume; ResNet baseline on LOCO crops | Laptop | A fresh clone reproduces the baseline |
-| 05–06 | Transformers | Attention, multi-head attention and transformer blocks, with tests | Laptop | Tests pass and a tiny batch overfits |
-| 07–08 | Small ViT | Scratch vs pretrained; measure AMP, batch size and data loading | Laptop | First comparison tables are in the Project 1 report |
-| 09–10 | Label-efficient learning | Freeze splits; baselines at each label budget; contrastive pretraining | Rented GPU | Baselines and encoder are saved |
-| 11–12 | Label-efficient evaluation | Linear probe, fine-tuning and ablations with 3 seeds | Rented GPU | Project 2 report is done |
-| 13 | Localization setup | Rebuild ORB + EKF; run the aisle-label baseline | Laptop | Classical baseline has measured pose error |
-| 14 | Learned front end | Place recognition and matching with the EKF; run robustness tests | Laptop first | Learned and classical results are compared |
-| 15 | Factor graph | Sliding-window factor graph with outlier rejection, using GTSAM | Laptop | Graph and EKF results are compared |
-| 16 | Fusion and aisle labels | Cross-attention reliability model; compact SmolVLM adaptation and hallucination audit | Laptop first | Full system is measured; Project 4 report is done |
-| 17 | Geometry | Camera models, Structure from Motion and bundle adjustment | Laptop | Reprojection and pose error are measured |
-| 18 | Scene representation | 3D Gaussian Splatting from those poses | Laptop first | Novel views are scored; Project 3 report is done |
-| 19–20 | Distributed training | DDP, sampler and checkpoint checks; scaling measurements | Rented, 2–4 GPUs in one machine | Project 1 report is done |
-| 21–22 | Warehouse 3D perception | Depth and occupancy, with and without rendered views | Rented GPU | Gain from rendered data is measured |
-| 23 | Deployment | Export and quantize one model; measure latency and accuracy | Laptop or edge device | Deployment table is finished |
-| 24 | Integration | Demo, final report and defense notes | Laptop | Project 5 report is done and the demo runs |
+18 hours a week, with 12 for training and projects and 6 for coding practice and career work. The full plan, including coding practice and applications, is tracked outside this repository.
 
-Assumes 15–20 hours a week. Week 16 is the tightest. If time runs short, drop temporal tracking first, then the NeRF comparison.
+| Weeks | Dates | Main work | Compute | Finished when |
+| ----: | ----- | --------- | ------- | ------------- |
+| 01–02 | Done | Tensors, autograd, modules and optimization | Laptop | Done |
+| 03 | Nov 2–8 | Data audit; reproducible LOCO crop pipeline | Laptop | [Data audit](reports/data-audit.md) is complete; resume is verified |
+| 04 | Nov 9–15 | ResNet baseline and failure analysis | Laptop | A fresh clone reproduces the baseline |
+| 05–06 | Nov 16–29 | Attention, transformer blocks and small ViT | Laptop | Tests pass; controlled CNN comparison is done |
+| 07–08 | Nov 30–Dec 13 | Pretrained adaptation; AMP and data-loading profiling | Laptop | First tables are in the Project 1 report |
+| 09–10 | Dec 14–27 | Frozen splits, baselines and contrastive pretraining | Rented GPU | Baselines and encoder are saved |
+| 11–12 | Dec 28–Jan 3 | Linear probes, one ablation and the Project 2 report | Rented GPU | Project 2 report is done |
+| 13 | Jan 4–10 | Localization and label-reading baselines | Laptop | Baselines have measured results |
+| 14 | Jan 11–17 | One learned visual measurement | Laptop first | Classical and learned are compared |
+| 15 | Jan 18–24 | Localization robustness | Laptop | Simulated-corruption table is finished |
+| 16 | Jan 25–31 | Label-reading LoRA adaptation | Laptop first | Tiny-batch overfit and comparison are done |
+| 17 | Feb 1–7 | Cross-attention trust model and label evaluation | Laptop first | Trust ablation and real-image holdout are done |
+| 18 | Feb 8–14 | Project 3 and 4 reports | Laptop | Both reports are done |
+| 19–20 | Feb 15–28 | Two-GPU DDP and one memory study | Rented, 2 GPUs in one machine | Project 1 report is done |
+| 21–24 | Mar 1–28 | ML coding, system design, project defense and applications | Laptop | Mock loop and readiness review are done |
+
+Weeks 3–10 moved one week later, and weeks 11–12 share one week to get back on schedule. That leaves no spare time before January, so reduce runs or model size before cutting evaluation.
 
 ### Compute
 
-Development and small experiments run on a laptop RTX 4070 (8 GB). Heavy training runs on rented GPUs, at an estimated $150–400 for the whole roadmap. Check live prices before renting. Checkpoint and resume must work before week 9, because cheap instances can be interrupted. Datasets and runs stay outside OneDrive.
+Development and small experiments run on a laptop RTX 4070 (8 GB). Project 2 and DDP run on rented GPUs, at an estimated $100–200 in total. Check live prices before renting. Checkpoint and resume must work before week 9, because cheap instances can be interrupted. Datasets and runs stay outside OneDrive.
 
 ---
 
@@ -59,18 +57,13 @@ Development and small experiments run on a laptop RTX 4070 (8 GB). Heavy trainin
 
 | Weeks | Milestone | Status |
 | ----: | --------- | :----: |
-| 01–02 | Data audit | ⬜ |
-| 03–04 | Pipeline and ResNet baseline | ⬜ |
-| 05–06 | Attention and transformer blocks | ⬜ |
-| 07–08 | Small ViT and training measurements | ⬜ |
+| 01–02 | Tensors, autograd, modules and optimization | ✅ |
+| 03–04 | Data audit, pipeline and ResNet baseline | ⬜ |
+| 05–08 | Small ViT and training measurements | ⬜ |
 | 09–12 | Project 2 report | ⬜ |
-| 13–16 | Localization comparison | ⬜ |
-| 16 | Project 4 report | ⬜ |
-| 17–18 | SfM, Gaussian Splatting, Project 3 report | ⬜ |
-| 19–20 | DDP scaling, Project 1 report | ⬜ |
-| 21–22 | Depth and occupancy | ⬜ |
-| 23 | Deployment benchmark | ⬜ |
-| 24 | Project 5 report and demo | ⬜ |
+| 13–18 | Project 3 and 4 reports | ⬜ |
+| 19–20 | DDP scaling and Project 1 report | ⬜ |
+| 21–24 | Interview readiness | ⬜ |
 
 ---
 
@@ -83,27 +76,27 @@ Where appropriate, experiments will measure:
 * Training throughput
 * GPU utilization
 * GPU memory consumption
-* Scaling efficiency
+* Time to target quality
 * Model accuracy, per class as well as overall
 * Inference latency
-* Model size
 * Data-loading performance
 
-Failures, bottlenecks, unexpected results, and debugging observations are documented alongside successful experiments. A classical baseline that wins is a valid result.
+Failures, bottlenecks, unexpected results, and debugging observations are documented alongside successful experiments. A baseline that wins is a valid result.
 
 ---
 
 # 🔬 Major Projects
 
-The weekly exercises feed into five projects. [PROJECTS.md](PROJECTS.md) defines the objectives, metrics and completion criteria for each.
+The weekly exercises feed into four studies. [PROJECTS.md](PROJECTS.md) defines the objectives, metrics and completion criteria for each.
 
 | Project | Research question | Code | Report |
 | ------- | ----------------- | ---- | ------ |
-| Warehouse Object Recognition & ViT Scaling | How do architecture, training choices and hardware utilization affect recognition quality and training cost for warehouse objects? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
-| Label-Efficient Warehouse Perception | Does self-supervised pretraining on warehouse images improve downstream performance at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
-| Learned Forklift Localization | When do learned measurements and a factor graph improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
-| Aisle and Rack Label Reading | Can parameter-efficient adaptation read aisle and rack labels better than an OCR baseline while preserving quality on a broader holdout? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |
-| Warehouse 3D Perception | Can a reconstructed warehouse scene supply useful training data, and how well can a small model recover depth and occupancy around a forklift? | `07` | [report](reports/project-5-warehouse-3d/report.md) |
+| Warehouse Recognition & ViT Scaling | How do CNN and ViT training choices affect warehouse object classification, generalization and training cost? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
+| Label-Efficient Warehouse Perception | Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
+| Robust Warehouse Localization with Learned Visual Measurements | Can a learned matching or relocalization component improve a fixed localization pipeline under visual degradation and sensor misalignment? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
+| Aisle and Rack Label Reading | Can LoRA adaptation read aisle and rack labels better than OCR and a pretrained VLM while preserving quality on unseen strings, layouts and real images? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |
+
+One focused 3D study is an [optional extension](07-3d-vision/README.md) if time allows.
 
 ---
 
@@ -119,9 +112,9 @@ deep-learning-systems-lab/
 ├── 04-distributed/              # DDP, memory analysis, optional FSDP
 ├── 05-self-supervised/          # label-efficient representation learning
 ├── 06-multimodal/
-│   ├── video-sensor/            # learned localization, factor graph, multimodal fusion
+│   ├── video-sensor/            # learned localization and trust modeling
 │   └── vision-language/         # aisle and rack label reading
-├── 07-3d-vision/                # SfM, Gaussian Splatting, depth, occupancy, deployment
+├── 07-3d-vision/                # optional extension
 └── reports/                     # data audit, tables, figures, project defenses
 ```
 
@@ -164,11 +157,9 @@ Used for camera geometry, epipolar geometry, pose estimation, and reconstruction
 
 * *Attention Is All You Need*
 * *An Image Is Worth 16×16 Words*
-* *Masked Autoencoders Are Scalable Vision Learners*
-* *Emerging Properties in Self-Supervised Vision Transformers*
+* *A Simple Framework for Contrastive Learning of Visual Representations*
 * *DINOv2: Learning Robust Visual Features without Supervision*
 * *Learning Transferable Visual Models From Natural Language Supervision*
-* *NeRF: Representing Scenes as Neural Radiance Fields*
 * *3D Gaussian Splatting for Real-Time Radiance Field Rendering*
 
 ---
@@ -199,7 +190,7 @@ Explain
 
 The objective is not to collect implementations of existing models.
 
-It is to understand **why the systems behave the way they do** — from tensor layouts and distributed communication to representation learning, sensor fusion, multi-view geometry, and real-time model deployment.
+It is to understand **why the systems behave the way they do** — from tensor layouts and distributed communication to representation learning, sensor fusion, and honest evaluation.
 
 ---
 
