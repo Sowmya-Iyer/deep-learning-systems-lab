@@ -1,11 +1,11 @@
-x# deep-learning-systems-lab
-Hands-on implementations and experiments in GPU programming, PyTorch, vision transformers, distributed training, self-supervised learning, multimodal perception, and 3D vision.
+# deep-learning-systems-lab
+Hands-on implementations and experiments in PyTorch, vision transformers, distributed training, self-supervised learning, multimodal perception and 3D vision, applied to forklift perception in warehouses.
 
 This repository documents a structured 24-week progression through:
 
-**CUDA → PyTorch → Transformers → Distributed Training → Self-Supervised Learning → Video & Multimodal Models → 3D Vision → Efficient Deployment**
+**PyTorch → Transformers → Self-Supervised Learning → Learned Localization → Vision-Language → 3D Vision → Distributed Training → Deployment**
 
-Rather than treating these topics as isolated tutorials, the goal is to understand how modern vision and foundation models are **implemented, trained, scaled, optimized, and ultimately deployed in real-world perception systems**.
+Each stage replaces or extends a classical perception method, then measures whether the learned approach is actually better. The goal is to understand how modern vision models are **implemented, trained, scaled, optimized, and deployed in real-world perception systems**.
 
 ---
 
@@ -14,273 +14,62 @@ Rather than treating these topics as isolated tutorials, the goal is to understa
 By the end of this lab, I aim to be able to:
 
 * Write production-quality training pipelines in native PyTorch
-* Understand how deep-learning workloads execute on GPUs
 * Implement Transformer and Vision Transformer components from first principles
-* Train models across multiple GPUs using DDP and FSDP
-* Diagnose GPU memory, utilization, data-loading, and communication bottlenecks
-* Understand and implement modern self-supervised vision techniques
-* Build temporal and multimodal perception models
-* Develop practical understanding of multi-view geometry and 3D reconstruction
-* Optimize trained models through quantization, distillation, and deployment tooling
-* Reason about the complete lifecycle of a large-scale robotics perception model
+* Reduce labeling needs through self-supervised pretraining
+* Improve visual localization with learned measurements inside an EKF
+* Adapt a small vision-language model to read warehouse labels without hallucinating
+* Implement multi-view geometry, Structure from Motion and bundle adjustment
+* Reconstruct warehouse scenes with 3D Gaussian Splatting
+* Train depth and occupancy models for scene awareness
+* Train across multiple GPUs using DDP, and diagnose memory and data-loading bottlenecks
+* Deploy a quantized model and measure its latency
 
 ---
 
 ## 🗺️ Roadmap
 
-| Phase | Weeks | Focus                                |
-| ----- | ----: | ------------------------------------ |
-| I     | 01–04 | PyTorch & GPU Foundations            |
-| II    | 05–08 | Transformers & Vision Transformers   |
-| III   | 09–12 | Distributed & Large-Scale Training   |
-| IV    | 13–16 | Self-Supervised & Foundation Vision  |
-| V     | 17–20 | Video, Multimodal & Efficient Models |
-| VI    | 21–24 | 3D Vision & ML Systems               |
+| Weeks | Phase | Main work | Compute | Finished when |
+| ----: | ----- | --------- | ------- | ------------- |
+| 01–02 | Foundations and data audit | Finish tensors and autograd; check sensors, licenses and ground truth for each dataset | Laptop | [Data audit](reports/data-audit.md) is complete |
+| 03–04 | Training pipeline | Configs, checkpoints and resume; ResNet baseline on LOCO crops | Laptop | A fresh clone reproduces the baseline |
+| 05–06 | Transformers | Attention, multi-head attention and transformer blocks, with tests | Laptop | Tests pass and a tiny batch overfits |
+| 07–08 | Small ViT | Scratch vs pretrained; measure AMP, batch size and data loading | Laptop | First comparison tables are in the Project 1 report |
+| 09–10 | Label-efficient learning | Freeze splits; baselines at each label budget; contrastive pretraining | Rented GPU | Baselines and encoder are saved |
+| 11–12 | Label-efficient evaluation | Linear probe, fine-tuning and ablations with 3 seeds | Rented GPU | Project 2 report is done |
+| 13 | Localization setup | Rebuild ORB + EKF; run the aisle-label baseline | Laptop | Classical baseline has measured pose error |
+| 14–15 | Learned localization | Place recognition and matching into the EKF; test slip, blur and time offset | Laptop first | Learned and classical results are compared |
+| 16 | Aisle-label reader | Compact SmolVLM adaptation and hallucination audit | Laptop first | Project 4 report is done |
+| 17 | Geometry | Camera models, Structure from Motion and bundle adjustment | Laptop | Reprojection and pose error are measured |
+| 18 | Scene representation | 3D Gaussian Splatting from those poses | Laptop first | Novel views are scored; Project 3 report is done |
+| 19–20 | Distributed training | DDP, sampler and checkpoint checks; scaling measurements | Rented, 2–4 GPUs in one machine | Project 1 report is done |
+| 21–22 | Warehouse 3D perception | Depth and occupancy, with and without rendered views | Rented GPU | Gain from rendered data is measured |
+| 23 | Deployment | Export and quantize one model; measure latency and accuracy | Laptop or edge device | Deployment table is finished |
+| 24 | Integration | Demo, final report and defense notes | Laptop | Project 5 report is done and the demo runs |
 
----
+Assumes 15–20 hours a week. If time runs short, drop temporal tracking first, then the NeRF comparison.
 
-## 01 — PyTorch & GPU Foundations
+### Compute
 
-**Weeks 1–4**
-
-Build the foundations of GPU-aware deep-learning engineering.
-
-### Topics
-
-* PyTorch tensors and tensor memory layout
-* CPU ↔ GPU execution
-* Autograd and computational graphs
-* `nn.Module` and model construction
-* Dataset and DataLoader design
-* Training and evaluation loops
-* Optimizers and learning-rate schedules
-* Checkpointing and reproducibility
-* CUDA threads, blocks, grids, and warps
-* GPU memory hierarchy
-* Coalesced memory access
-* Shared-memory tiling
-* Synchronization and atomics
-
-### Exercises
-
-* CPU vs CUDA vs PyTorch vector addition
-* Manual linear regression with autograd
-* CUDA image-processing kernel
-* Naive CUDA matrix multiplication
-* Shared-memory tiled matrix multiplication
-* Production-style CIFAR training pipeline
-
----
-
-## 02 — Transformers & Vision Transformers
-
-**Weeks 5–8**
-
-Move from tensor operations to modern neural architectures.
-
-### Topics
-
-* Query, Key, and Value representations
-* Scaled dot-product attention
-* Self-attention and cross-attention
-* Multi-head attention
-* Attention masks
-* Layer normalization
-* Residual connections
-* Transformer encoder blocks
-* Patch embeddings
-* Positional embeddings
-* Vision Transformers
-* Mixed-precision training
-* Gradient accumulation and clipping
-* PyTorch profiling
-* Training throughput optimization
-
-### Exercises
-
-* Single-head attention from scratch
-* Multi-head attention from scratch
-* Transformer encoder
-* Vision Transformer implementation
-* CIFAR-100 ViT training
-* ViT profiling and optimization
-
----
-
-## 03 — Distributed & Large-Scale Training
-
-**Weeks 9–12**
-
-Understand how training changes when one GPU is no longer enough.
-
-### Topics
-
-* Processes, ranks, and world size
-* NCCL
-* Distributed collectives
-* `AllReduce`
-* `AllGather`
-* `ReduceScatter`
-* DistributedDataParallel
-* Distributed sampling
-* Scaling efficiency
-* Model and optimizer memory
-* Fully Sharded Data Parallel
-* Parameter and optimizer-state sharding
-* Activation checkpointing
-* BF16 mixed precision
-* Gradient accumulation
-* Tensor parallelism
-* Pipeline parallelism
-* Compute/communication tradeoffs
-
-### Exercises
-
-* Distributed collective communication demo
-* Single-GPU → multi-GPU ViT
-* DDP throughput benchmark
-* DDP vs FSDP memory comparison
-* Large-model OOM investigation
-* Memory reduction using FSDP + BF16 + activation checkpointing
-
----
-
-## 04 — Self-Supervised & Foundation Vision
-
-**Weeks 13–16**
-
-Explore how large visual representations can be learned from unlabeled data.
-
-### Topics
-
-* Representation learning
-* Contrastive learning
-* Self-supervised pretraining
-* Linear probing
-* Masked image modeling
-* MAE
-* Teacher/student learning
-* EMA teachers
-* DINO/DINOv2 concepts
-* CLIP-style vision-language learning
-* Pseudo-labeling
-* Confidence filtering
-* Automatic labeling pipelines
-* Hard-example mining
-
-### Exercises
-
-* Contrastive visual encoder
-* Embedding visualization
-* MAE pretraining experiment
-* Pretrained vs random initialization comparison
-* Teacher/student SSL experiment
-* Linear probing
-* Automated video labeling pipeline
-
----
-
-## 05 — Video, Multimodal & Efficient Models
-
-**Weeks 17–20**
-
-Extend perception from individual images to temporal and multimodal environments.
-
-### Topics
-
-* Video tensors and frame sampling
-* Temporal positional embeddings
-* Spatial vs temporal attention
-* Video Transformers
-* Early and late multimodal fusion
-* Cross-attention
-* Modality-specific encoders
-* Camera + state/IMU representations
-* World-model concepts
-* Action conditioning
-* Future representation prediction
-* Vision-language-action models
-* Knowledge distillation
-* Quantization
-* PTQ and QAT
-* Structured and unstructured pruning
-
-### Exercises
-
-* Video classification with temporal attention
-* Camera + IMU/state fusion Transformer
-* Future-state prediction
-* Action-conditioned latent prediction
-* Teacher/student distillation
-* FP16/INT8 deployment benchmark
-* ONNX/TensorRT export
-
----
-
-## 06 — 3D Vision & ML Systems
-
-**Weeks 21–24**
-
-Connect learned perception with geometry and complete-system reasoning.
-
-### Topics
-
-* Camera coordinate systems
-* Intrinsic and extrinsic calibration
-* Homogeneous coordinates
-* Camera projection
-* Fundamental and essential matrices
-* Epipolar geometry
-* PnP
-* Triangulation
-* Stereo geometry
-* Structure from Motion
-* Bundle adjustment
-* NeRF concepts
-* 3D Gaussian Splatting
-* Large-scale ML data engines
-* Model lifecycle design
-* Training/deployment feedback loops
-
-### Exercises
-
-* Feature matching and epipolar-line visualization
-* Camera pose estimation
-* Multi-view triangulation
-* 3D point-cloud reconstruction
-* Small neural/3D scene representation experiment
-* End-to-end foundation-model system design
+Development and small experiments run on a laptop RTX 4070 (8 GB). Heavy training runs on rented GPUs, at an estimated $150–400 for the whole roadmap. Check live prices before renting. Checkpoint and resume must work before week 9, because cheap instances can be interrupted. Datasets and runs stay outside OneDrive.
 
 ---
 
 # 📊 Progress
 
-| Week | Focus                    | Implementation / Experiment             | Status |
-| ---: | ------------------------ | --------------------------------------- | :----: |
-|   01 | PyTorch tensors + CUDA   | Vector-add benchmark                    |    ⬜   |
-|   02 | Autograd + GPU execution | Manual regression + CUDA image kernel   |    ⬜   |
-|   03 | GPU memory               | Naive vs tiled GEMM                     |    ⬜   |
-|   04 | Training systems         | CIFAR-100 training framework            |    ⬜   |
-|   05 | Attention                | Scaled dot-product attention            |    ⬜   |
-|   06 | Transformers             | Multi-head attention + encoder          |    ⬜   |
-|   07 | Vision Transformers      | ViT from scratch                        |    ⬜   |
-|   08 | Training optimization    | AMP + profiling                         |    ⬜   |
-|   09 | Distributed fundamentals | Collective communication                |    ⬜   |
-|   10 | DDP                      | Distributed ViT                         |    ⬜   |
-|   11 | FSDP                     | DDP vs FSDP benchmark                   |    ⬜   |
-|   12 | Large-model training     | Memory optimization                     |    ⬜   |
-|   13 | SSL                      | Contrastive encoder                     |    ⬜   |
-|   14 | MAE                      | Masked pretraining                      |    ⬜   |
-|   15 | DINO                     | Teacher/student learning                |    ⬜   |
-|   16 | Data engines             | Automatic labeling pipeline             |    ⬜   |
-|   17 | Video                    | Temporal Transformer                    |    ⬜   |
-|   18 | Multimodal               | Vision + state/IMU fusion               |    ⬜   |
-|   19 | World models             | Future representation prediction        |    ⬜   |
-|   20 | Model efficiency         | Distillation + quantization             |    ⬜   |
-|   21 | Geometry                 | Epipolar geometry                       |    ⬜   |
-|   22 | 3D                       | Multi-view reconstruction               |    ⬜   |
-|   23 | ML systems               | Large-scale training/data-engine design |    ⬜   |
-|   24 | Integration              | Final system + technical retrospective  |    ⬜   |
+| Weeks | Milestone | Status |
+| ----: | --------- | :----: |
+| 01–02 | Data audit | ⬜ |
+| 03–04 | Pipeline and ResNet baseline | ⬜ |
+| 05–06 | Attention and transformer blocks | ⬜ |
+| 07–08 | Small ViT and training measurements | ⬜ |
+| 09–12 | Project 2 report | ⬜ |
+| 13–15 | Localization comparison | ⬜ |
+| 16 | Project 4 report | ⬜ |
+| 17–18 | SfM, Gaussian Splatting, Project 3 report | ⬜ |
+| 19–20 | DDP scaling, Project 1 report | ⬜ |
+| 21–22 | Depth and occupancy | ⬜ |
+| 23 | Deployment benchmark | ⬜ |
+| 24 | Project 5 report and demo | ⬜ |
 
 ---
 
@@ -294,61 +83,52 @@ Where appropriate, experiments will measure:
 * GPU utilization
 * GPU memory consumption
 * Scaling efficiency
-* Model accuracy
+* Model accuracy, per class as well as overall
 * Inference latency
 * Model size
 * Data-loading performance
 
-For example:
-
-| GPUs | Global Batch | Throughput | Peak Memory/GPU | Scaling Efficiency |
-| ---: | -----------: | ---------: | --------------: | -----------------: |
-|    1 |            — |          — |               — |               100% |
-|    2 |            — |          — |               — |                  — |
-|    4 |            — |          — |               — |                  — |
-
-Failures, bottlenecks, unexpected results, and debugging observations are documented alongside successful experiments.
+Failures, bottlenecks, unexpected results, and debugging observations are documented alongside successful experiments. A classical baseline that wins is a valid result.
 
 ---
 
 # 🔬 Major Projects
 
-The weekly exercises progressively feed into four larger projects.
+The weekly exercises feed into five projects. [PROJECTS.md](PROJECTS.md) defines the objectives, metrics and completion criteria for each.
 
-### Distributed Vision Transformer
+| Project | Research question | Code | Report |
+| ------- | ----------------- | ---- | ------ |
+| Warehouse Object Recognition & ViT Scaling | How do architecture, training choices and hardware utilization affect recognition quality and training cost for warehouse objects? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
+| Label-Efficient Warehouse Perception | Does self-supervised pretraining on warehouse images improve downstream performance at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
+| Learned Forklift Localization | When do learned place recognition and matching improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
+| Aisle and Rack Label Reading | Can parameter-efficient adaptation read aisle and rack labels better than an OCR baseline while preserving quality on a broader holdout? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |
+| Warehouse 3D Perception | Can a reconstructed warehouse scene supply useful training data, and how well can a small model recover depth and occupancy around a forklift? | `07` | [report](reports/project-5-warehouse-3d/report.md) |
 
-Build a Vision Transformer from first principles and evolve its training stack from single-GPU execution to:
+---
 
-**AMP → DDP → FSDP → activation checkpointing → distributed benchmarks**
+# 🗂️ Repository Structure
 
-### Robotics Vision Foundation Model
+```text
+deep-learning-systems-lab/
+├── PROJECTS.md                  # what each project must deliver
+├── 01-pytorch-fundamentals/     # tensors, autograd, production-style training
+│   └── training-pipeline/       # shared pipeline, installed as the dlsl package
+├── 02-cuda-kernels/             # CUDA notes and optional GPU exercises
+├── 03-transformers/             # attention, transformer blocks, ViT
+├── 04-distributed/              # DDP, memory analysis, optional FSDP
+├── 05-self-supervised/          # label-efficient representation learning
+├── 06-multimodal/
+│   ├── video-sensor/            # learned localization with odometry fusion
+│   └── vision-language/         # aisle and rack label reading
+├── 07-3d-vision/                # SfM, Gaussian Splatting, depth, occupancy, deployment
+└── reports/                     # data audit, tables, figures, project defenses
+```
 
-Develop a vision pretraining/data-engine pipeline around:
-
-**unlabeled visual data → automatic labeling → self-supervised pretraining → downstream dense prediction**
-
-### Multimodal Robot Perception
-
-Explore temporal and multimodal representations using:
-
-**video + motion/state signals → modality encoders → multimodal fusion → future prediction**
-
-### Efficient Robot Perception
-
-Take a trained vision model through:
-
-**teacher → student → distillation → quantization → ONNX → TensorRT → latency/accuracy evaluation**
+Code, configs and frozen splits are committed. Datasets, checkpoints and `runs/` are not; final numbers are copied into `reports/`.
 
 ---
 
 # 📚 Primary References
-
-### GPU Programming
-
-**Programming Massively Parallel Processors**
-David B. Kirk & Wen-mei W. Hwu
-
-Used alongside the CUDA exercises to develop intuition about GPU execution, memory hierarchy, tiling, synchronization, and parallel algorithms.
 
 ### PyTorch
 
@@ -359,13 +139,19 @@ Official PyTorch documentation and tutorials, with emphasis on:
 * profiling
 * `torch.distributed`
 * DDP
-* FSDP
+
+### GPU Programming
+
+**Programming Massively Parallel Processors**
+David B. Kirk & Wen-mei W. Hwu
+
+Used alongside the optional CUDA exercises to develop intuition about GPU execution and memory hierarchy.
 
 ### Computer Vision
 
 **Stanford CS231n — Deep Learning for Computer Vision**
 
-Used selectively for modern vision architectures, self-supervised learning, video understanding, vision-language models, and related topics.
+Used selectively for modern vision architectures, self-supervised learning, video understanding and vision-language models.
 
 ### 3D Vision
 
@@ -412,7 +198,7 @@ Explain
 
 The objective is not to collect implementations of existing models.
 
-It is to understand **why the systems behave the way they do** — from CUDA memory access and tensor layouts to distributed communication, representation learning, multimodal fusion, and real-time model deployment.
+It is to understand **why the systems behave the way they do** — from tensor layouts and distributed communication to representation learning, sensor fusion, multi-view geometry, and real-time model deployment.
 
 ---
 
