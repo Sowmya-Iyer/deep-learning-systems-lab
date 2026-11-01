@@ -1,6 +1,6 @@
-# Project 1: Warehouse Object Recognition & ViT Scaling
+# Project 1: Warehouse Recognition & ViT Scaling
 
-**Research question.** How do architecture, training choices and hardware utilization affect recognition quality and training cost for warehouse objects?
+**Research question.** How do CNN and ViT training choices affect warehouse object classification, generalization and training cost?
 
 ## Summary
 
@@ -18,9 +18,9 @@ Dataset, splits, models compared, and what was held constant.
 
 ## Results
 
-| Config | Validation accuracy | Test accuracy | Forklift accuracy | Training time | Samples/second | Peak GPU memory | Scaling efficiency |
-| ------ | --- | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | — | — | — |
+| Config | Macro-F1 | Lowest per-class recall | Accuracy | Training time | Samples/second | Peak GPU memory | Time to target | Cost |
+| ------ | --- | --- | --- | --- | --- | --- | --- | --- |
+| — | — | — | — | — | — | — | — | — |
 
 ## Analysis
 
@@ -38,8 +38,9 @@ Commands and configs that regenerate the tables above.
 
 Questions to answer without notes:
 
+- Why is this crop classification and not detection?
+- How did splitting before cropping prevent leakage?
 - What made training unstable, and how was it diagnosed?
 - Where was the bottleneck, and what evidence shows it?
-- How did class imbalance affect forklift results?
 - What numerical behavior did AMP introduce?
 - Why these distributed choices?

@@ -1,28 +1,22 @@
 # 07-3d-vision
 
-Geometry, scene representation, warehouse depth and occupancy, and deployment for [Project 5](../PROJECTS.md). Weeks 17-18 and 21-24.
+Optional extension. Start only with spare project time; weeks 21-24 stay reserved for interview preparation. See [PROJECTS.md](../PROJECTS.md).
+
+**Question.** How does pose quality affect novel-view quality on one warehouse sequence?
 
 ## Layout
 
 ```
 07-3d-vision/
 ├── geometry/       # camera models, Structure from Motion, bundle adjustment
-├── splatting/      # 3D Gaussian Splatting from recovered poses
-├── perception/     # depth and occupancy, with and without rendered views
-├── deployment/     # export, quantization, latency measurements
+├── splatting/      # 3D Gaussian Splatting
 └── configs/
 ```
 
-## Compute
-
-Start geometry and splatting on the laptop with one small scene. Train depth and occupancy on a rented GPU. Measure deployment latency on the target device, and name that device in the report.
-
 ## Done when
 
-- [ ] Structure from Motion and bundle adjustment run on one warehouse sequence, with reprojection and pose error measured
-- [ ] Gaussian Splatting is scored on held-out frames
-- [ ] Depth and occupancy are trained with and without rendered views, and the gain is measured, even if it is zero
-- [ ] One model is exported and quantized, with latency, accuracy and size reported
-- [ ] One demo runs from warehouse images to a 3D scene and a perception output
+- [ ] Structure from Motion and bundle adjustment run on one sequence with enough camera overlap
+- [ ] Reprojection error and pose error are measured
+- [ ] Gaussian Splatting is scored on held-out views for each pose source
 
-Temporal tracking and a NeRF comparison are optional. Results go in the [Project 5 report](../reports/project-5-warehouse-3d/report.md).
+Good novel views do not prove accurate metric geometry or useful data augmentation, so make neither claim. Record results in this README.
