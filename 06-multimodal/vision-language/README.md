@@ -29,6 +29,6 @@ vision-language/
 - [ ] Trainable parameter count, peak memory and training time are reported
 - [ ] Adapter checkpoint or reproduction instructions are available
 
-Training a VLM from scratch is outside scope. Feeding aisle readings into the Project 3 EKF is an extension.
+Training a VLM from scratch is outside scope. Feeding aisle readings into the Project 3 factor graph is an extension.
 
 Results go in the [Project 4 report](../../reports/project-4-vision-language/report.md).

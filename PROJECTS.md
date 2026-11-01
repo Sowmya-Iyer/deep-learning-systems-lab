@@ -6,7 +6,7 @@ The source of truth for what this repository must deliver. Each project applies 
 | - | ------- | ----- | ---- | ------ |
 | 1 | Warehouse Object Recognition & ViT Scaling | 3-8, 19-20 | [training-pipeline](01-pytorch-fundamentals/training-pipeline/), [03-transformers](03-transformers/), [04-distributed](04-distributed/) | [report](reports/project-1-vit-scaling/report.md) |
 | 2 | Label-Efficient Warehouse Perception | 9-12 | [05-self-supervised](05-self-supervised/) | [report](reports/project-2-label-efficient/report.md) |
-| 3 | Learned Forklift Localization | 13-15, 18 | [06-multimodal/video-sensor](06-multimodal/video-sensor/) | [report](reports/project-3-video-sensor/report.md) |
+| 3 | Learned Forklift Localization | 13-16, 18 | [06-multimodal/video-sensor](06-multimodal/video-sensor/) | [report](reports/project-3-video-sensor/report.md) |
 | 4 | Aisle and Rack Label Reading | 13, 16 | [06-multimodal/vision-language](06-multimodal/vision-language/) | [report](reports/project-4-vision-language/report.md) |
 | 5 | Warehouse 3D Perception | 17-18, 21-24 | [07-3d-vision](07-3d-vision/) | [report](reports/project-5-warehouse-3d/report.md) |
 
@@ -61,21 +61,34 @@ The source of truth for what this repository must deliver. Each project applies 
 
 ## Project 3: Learned Forklift Localization
 
-**Objective.** Establish whether learned visual measurements improve a classical localization stack.
+**Objective.** Establish whether learned measurements, a better state estimator and learned multimodal fusion each improve a classical localization stack.
 
-**Research question.** When do learned place recognition and matching improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned?
+**Research question.** When do learned measurements and a factor graph improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned?
 
 **Build: baseline.** Rebuild ORB matching against a reference map and EKF fusion with odometry. Measure pose error and lost-localization rate on the dataset chosen in the [data audit](reports/data-audit.md).
 
-**Build: learned front end.** Add learned place recognition and feature matching, and feed them to the same EKF as measurements with covariance. The EKF stays; do not replace it with an end-to-end pose regressor.
+**Build: learned front end.** Add learned place recognition and feature matching, and feed them to the same EKF as measurements with fixed covariance.
 
-**Build: robustness.** Compare motion blur, low texture, wheel slip, dropped camera or odometry, and camera-to-odometry time offsets. Keep the route segments used for tuning and evaluation separate.
+**Build: factor graph.** Replace the EKF with a sliding-window factor graph with outlier rejection, using GTSAM. It must handle repeated aisles, false matches and late measurements better than the filter, or the report explains why not. Do not replace state estimation with an end-to-end pose regressor.
+
+**Build: learned fusion.** Train a small model on cached visual features and an odometry window, with temporal positions and one cross-attention block. It predicts the reliability of each visual measurement, which sets its noise in the factor graph.
+
+**Build: robustness.** Compare motion blur, low texture, wheel slip, dropped camera or odometry, and camera-to-odometry time offsets. Keep the route segments used for tuning and evaluation separate. If time runs short, keep the three most informative tests.
+
+**Comparison.** All four versions use the same routes and tests:
+
+| Version | Vision input | State estimator | Trust in vision |
+| ------- | ------------ | --------------- | --------------- |
+| Classical | ORB | EKF | Fixed |
+| Learned front end | Learned matching | EKF | Fixed |
+| Upgraded back end | Learned matching | Factor graph | Fixed, with outlier rejection |
+| Full system | Learned matching | Factor graph | Predicted by cross-attention |
 
 **Metrics.** Pose error; lost-localization rate; recovery time; behavior under each degradation; runtime per frame.
 
-**Completion criteria.** Compare ORB + EKF and learned + EKF with the same protocol. Explain where the learned front end helps, fails or learns shortcuts. Save reproducible configs and a standalone report.
+**Completion criteria.** Compare all four versions with the same protocol. Explain what each change contributed, and where it helps, fails or learns shortcuts. Save reproducible configs and a standalone report.
 
-**Scope and interview defense.** No new data collection. If the audit finds no usable odometry, simulate it from ground-truth poses with documented noise, and say so in the report. Defend time alignment, measurement covariance and what the filter trusts.
+**Scope and interview defense.** No new data collection. If the audit finds no usable odometry, simulate it from ground-truth poses with documented noise, and say so in the report. Using the EKF as a fast filter beside the graph, and a particle filter for global localization, are extensions. Defend time alignment, aisle aliasing, noise models and what the system trusts.
 
 ---
 
@@ -95,7 +108,7 @@ The source of truth for what this repository must deliver. Each project applies 
 
 **Completion criteria.** Provide repeatable training/evaluation, adapter checkpoint or reproduction instructions, and an honest report of improvements and regressions with representative error examples.
 
-**Scope and interview defense.** Compact project: week 13 baseline, week 16 adaptation and report. Training a VLM from scratch is outside scope. Feeding aisle readings into the Project 3 EKF is an extension. Explain why a hallucinated label is a localization failure.
+**Scope and interview defense.** Compact project: week 13 baseline, week 16 adaptation and report. Training a VLM from scratch is outside scope. Feeding aisle readings into the Project 3 factor graph is an extension. Explain why a hallucinated label is a localization failure.
 
 ---
 

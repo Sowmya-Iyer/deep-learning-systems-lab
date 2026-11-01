@@ -16,7 +16,7 @@ By the end of this lab, I aim to be able to:
 * Write production-quality training pipelines in native PyTorch
 * Implement Transformer and Vision Transformer components from first principles
 * Reduce labeling needs through self-supervised pretraining
-* Improve visual localization with learned measurements inside an EKF
+* Improve visual localization with learned measurements, factor-graph estimation and cross-attention fusion
 * Adapt a small vision-language model to read warehouse labels without hallucinating
 * Implement multi-view geometry, Structure from Motion and bundle adjustment
 * Reconstruct warehouse scenes with 3D Gaussian Splatting
@@ -37,8 +37,9 @@ By the end of this lab, I aim to be able to:
 | 09–10 | Label-efficient learning | Freeze splits; baselines at each label budget; contrastive pretraining | Rented GPU | Baselines and encoder are saved |
 | 11–12 | Label-efficient evaluation | Linear probe, fine-tuning and ablations with 3 seeds | Rented GPU | Project 2 report is done |
 | 13 | Localization setup | Rebuild ORB + EKF; run the aisle-label baseline | Laptop | Classical baseline has measured pose error |
-| 14–15 | Learned localization | Place recognition and matching into the EKF; test slip, blur and time offset | Laptop first | Learned and classical results are compared |
-| 16 | Aisle-label reader | Compact SmolVLM adaptation and hallucination audit | Laptop first | Project 4 report is done |
+| 14 | Learned front end | Place recognition and matching with the EKF; run robustness tests | Laptop first | Learned and classical results are compared |
+| 15 | Factor graph | Sliding-window factor graph with outlier rejection, using GTSAM | Laptop | Graph and EKF results are compared |
+| 16 | Fusion and aisle labels | Cross-attention reliability model; compact SmolVLM adaptation and hallucination audit | Laptop first | Full system is measured; Project 4 report is done |
 | 17 | Geometry | Camera models, Structure from Motion and bundle adjustment | Laptop | Reprojection and pose error are measured |
 | 18 | Scene representation | 3D Gaussian Splatting from those poses | Laptop first | Novel views are scored; Project 3 report is done |
 | 19–20 | Distributed training | DDP, sampler and checkpoint checks; scaling measurements | Rented, 2–4 GPUs in one machine | Project 1 report is done |
@@ -46,7 +47,7 @@ By the end of this lab, I aim to be able to:
 | 23 | Deployment | Export and quantize one model; measure latency and accuracy | Laptop or edge device | Deployment table is finished |
 | 24 | Integration | Demo, final report and defense notes | Laptop | Project 5 report is done and the demo runs |
 
-Assumes 15–20 hours a week. If time runs short, drop temporal tracking first, then the NeRF comparison.
+Assumes 15–20 hours a week. Week 16 is the tightest. If time runs short, drop temporal tracking first, then the NeRF comparison.
 
 ### Compute
 
@@ -63,7 +64,7 @@ Development and small experiments run on a laptop RTX 4070 (8 GB). Heavy trainin
 | 05–06 | Attention and transformer blocks | ⬜ |
 | 07–08 | Small ViT and training measurements | ⬜ |
 | 09–12 | Project 2 report | ⬜ |
-| 13–15 | Localization comparison | ⬜ |
+| 13–16 | Localization comparison | ⬜ |
 | 16 | Project 4 report | ⬜ |
 | 17–18 | SfM, Gaussian Splatting, Project 3 report | ⬜ |
 | 19–20 | DDP scaling, Project 1 report | ⬜ |
@@ -100,7 +101,7 @@ The weekly exercises feed into five projects. [PROJECTS.md](PROJECTS.md) defines
 | ------- | ----------------- | ---- | ------ |
 | Warehouse Object Recognition & ViT Scaling | How do architecture, training choices and hardware utilization affect recognition quality and training cost for warehouse objects? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
 | Label-Efficient Warehouse Perception | Does self-supervised pretraining on warehouse images improve downstream performance at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
-| Learned Forklift Localization | When do learned place recognition and matching improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
+| Learned Forklift Localization | When do learned measurements and a factor graph improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
 | Aisle and Rack Label Reading | Can parameter-efficient adaptation read aisle and rack labels better than an OCR baseline while preserving quality on a broader holdout? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |
 | Warehouse 3D Perception | Can a reconstructed warehouse scene supply useful training data, and how well can a small model recover depth and occupancy around a forklift? | `07` | [report](reports/project-5-warehouse-3d/report.md) |
 
@@ -118,7 +119,7 @@ deep-learning-systems-lab/
 ├── 04-distributed/              # DDP, memory analysis, optional FSDP
 ├── 05-self-supervised/          # label-efficient representation learning
 ├── 06-multimodal/
-│   ├── video-sensor/            # learned localization with odometry fusion
+│   ├── video-sensor/            # learned localization, factor graph, multimodal fusion
 │   └── vision-language/         # aisle and rack label reading
 ├── 07-3d-vision/                # SfM, Gaussian Splatting, depth, occupancy, deployment
 └── reports/                     # data audit, tables, figures, project defenses
