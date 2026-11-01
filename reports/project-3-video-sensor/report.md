@@ -1,6 +1,6 @@
 # Project 3: Learned Forklift Localization
 
-**Research question.** When do learned place recognition and matching improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned?
+**Research question.** When do learned measurements and a factor graph improve on ORB + EKF, and what happens when vision or odometry is degraded, missing or misaligned?
 
 ## Summary
 
@@ -20,7 +20,10 @@ Dataset, splits, models compared, and what was held constant.
 
 | Config | Pose error | Lost-localization rate | Recovery time | Blur | Wheel slip | Dropouts | Time offset | Runtime per frame |
 | ------ | --- | --- | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | — | — | — | — |
+| Classical: ORB + EKF | — | — | — | — | — | — | — | — |
+| Learned front end: learned matching + EKF | — | — | — | — | — | — | — | — |
+| Upgraded back end: learned matching + factor graph | — | — | — | — | — | — | — | — |
+| Full system: factor graph + predicted trust | — | — | — | — | — | — | — | — |
 
 ## Analysis
 
@@ -39,6 +42,7 @@ Commands and configs that regenerate the tables above.
 Questions to answer without notes:
 
 - How were camera and odometry aligned, and how was that checked?
-- How was measurement covariance chosen for learned matches?
-- When does the filter trust vision, and when odometry?
-- Where does the learned front end help, fail or learn shortcuts?
+- Why does an EKF struggle with repeated aisles, and did the factor graph fix that?
+- How does predicted reliability become a noise model, and is it calibrated?
+- When does the system trust vision, and when odometry?
+- What did each change contribute, and where did it fail or learn shortcuts?
