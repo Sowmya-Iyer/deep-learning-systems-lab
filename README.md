@@ -1,11 +1,11 @@
 # deep-learning-systems-lab
-Hands-on implementations and experiments in PyTorch, vision transformers, self-supervised learning, multimodal perception and distributed training, applied to warehouse perception.
+Hands-on implementations and experiments in PyTorch, vision transformers, self-supervised learning, multimodal perception and distributed training, applied to warehouse and driving perception.
 
 This repository documents a structured 24-week progression through:
 
 **PyTorch → Transformers → Self-Supervised Learning → Learned Localization → Vision-Language → Distributed Training → Interview Readiness**
 
-Each study applies a modern training technique to a real warehouse problem, then measures whether it beats a simpler baseline. The goal is to understand how modern vision models are **implemented, trained, scaled, and evaluated honestly**.
+Each study applies a modern training technique to a real warehouse or driving problem, then measures whether it beats a simpler baseline. The goal is to understand how modern vision models are **implemented, trained, scaled, and evaluated honestly**.
 
 ---
 
@@ -30,15 +30,15 @@ By the end of this lab, I aim to be able to:
 | Weeks | Dates | Main work | Compute | Finished when |
 | ----: | ----- | --------- | ------- | ------------- |
 | 01–02 | Done | Tensors, autograd, modules and optimization | Laptop | Done |
-| 03 | Nov 2–8 | Data audit; reproducible LOCO crop pipeline | Laptop | [Data audit](reports/data-audit.md) is complete; resume is verified |
+| 03 | Nov 2–8 | Data audit; reproducible crop pipeline on the audited dataset | Laptop | [Data audit](reports/data-audit.md) is complete; resume is verified |
 | 04 | Nov 9–15 | ResNet baseline and failure analysis | Laptop | A fresh clone reproduces the baseline |
 | 05–06 | Nov 16–29 | Attention, transformer blocks and small ViT | Laptop | Tests pass; controlled CNN comparison is done |
 | 07–08 | Nov 30–Dec 13 | Pretrained adaptation; AMP and data-loading profiling | Laptop | First tables are in the Project 1 report |
 | 09–10 | Dec 14–27 | Frozen splits, baselines and contrastive pretraining | Rented GPU | Baselines and encoder are saved |
 | 11–12 | Dec 28–Jan 3 | Linear probes, one ablation and the Project 2 report | Rented GPU | Project 2 report is done |
-| 13 | Jan 4–10 | Localization and label-reading baselines | Laptop | Baselines have measured results |
+| 13 | Jan 4–10 | Driving localization and label-reading baselines | Laptop | Baselines have measured results |
 | 14 | Jan 11–17 | One learned visual measurement | Laptop first | Classical and learned are compared |
-| 15 | Jan 18–24 | Localization robustness | Laptop | Simulated-corruption table is finished |
+| 15 | Jan 18–24 | Localization robustness | Laptop | Real-condition and simulated-corruption tables are finished |
 | 16 | Jan 25–31 | Label-reading LoRA adaptation | Laptop first | Tiny-batch overfit and comparison are done |
 | 17 | Feb 1–7 | Cross-attention trust model and label evaluation | Laptop first | Trust ablation and real-image holdout are done |
 | 18 | Feb 8–14 | Project 3 and 4 reports | Laptop | Both reports are done |
@@ -93,7 +93,7 @@ The weekly exercises feed into four studies. [PROJECTS.md](PROJECTS.md) defines 
 | ------- | ----------------- | ---- | ------ |
 | Warehouse Recognition & ViT Scaling | How do CNN and ViT training choices affect warehouse object classification, generalization and training cost? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
 | Label-Efficient Warehouse Perception | Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
-| Robust Warehouse Localization with Learned Visual Measurements | Can a learned matching or relocalization component improve a fixed localization pipeline under visual degradation and sensor misalignment? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
+| Robust Driving Localization with Learned Visual Measurements | Can a learned matching or relocalization component improve a fixed localization pipeline under visual degradation and sensor misalignment? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
 | Aisle and Rack Label Reading | Can LoRA adaptation read aisle and rack labels better than OCR and a pretrained VLM while preserving quality on unseen strings, layouts and real images? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |
 
 One focused 3D study is an [optional extension](07-3d-vision/README.md) if time allows.

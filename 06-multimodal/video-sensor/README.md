@@ -1,6 +1,6 @@
 # video-sensor
 
-Learned visual measurements and trust modeling for [Project 3](../../PROJECTS.md). Week 13 setup, weeks 14-15 experiments, week 17 trust model, week 18 report.
+Learned visual measurements and trust modeling on public driving data for [Project 3](../../PROJECTS.md). Week 13 setup, weeks 14-15 experiments, week 17 trust model, week 18 report.
 
 ## Layout
 
@@ -20,8 +20,8 @@ video-sensor/
 - Establish reference-pose quality first, and describe reference poses by how they were produced.
 - Use existing components for the baseline. Do not use employer code or parameters.
 - Keep the EKF fixed, and change one thing at a time.
-- Keep tuning and evaluation route segments separate, and train the trust model only on tuning segments.
-- Label injected wheel slip, delay and dropout as simulated.
+- Keep tuning and evaluation traverses separate, and train the trust model only on tuning traverses.
+- Label injected odometry faults, delay and dropout as simulated.
 
 | Version | Vision input | State estimator | Trust in vision |
 | ------- | ------------ | --------------- | --------------- |
@@ -33,11 +33,11 @@ video-sensor/
 
 - [ ] Camera and odometry timestamps are aligned and checked
 - [ ] Classical and learned versions are compared with the same protocol
-- [ ] Robustness is measured under blur, visual dropout, time offsets and odometry corruption
+- [ ] Robustness is measured across real weather and light changes, and under blur, visual dropout, time offsets and odometry corruption
 - [ ] Pose error, lost-localization rate, recovery time and runtime are reported
 - [ ] The trust model is compared with fixed trust, or dropped with a reason if the baseline was not working by week 16
 - [ ] The report explains where each version helps, fails or learns shortcuts
 
-A factor graph, a particle filter and fusing aisle labels are extensions.
+A factor graph and a particle filter are extensions.
 
 Results go in the [Project 3 report](../../reports/project-3-video-sensor/report.md).

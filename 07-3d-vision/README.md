@@ -2,7 +2,7 @@
 
 Optional extension. Start only with spare project time; weeks 21-24 stay reserved for interview preparation. See [PROJECTS.md](../PROJECTS.md).
 
-**Question.** How does pose quality affect novel-view quality on one warehouse sequence?
+**Question.** How does pose quality affect novel-view quality on one public sequence?
 
 ## Layout
 
