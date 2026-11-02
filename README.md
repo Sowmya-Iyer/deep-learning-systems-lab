@@ -15,6 +15,7 @@ By the end of this lab, I aim to be able to:
 
 * Write production-quality training pipelines in native PyTorch
 * Implement Transformer and Vision Transformer components from first principles
+* Train, evaluate and scale object detectors on full warehouse images
 * Design controlled experiments, with fair baselines, seeds and honest claims
 * Reduce labeling needs through self-supervised pretraining
 * Improve visual localization with learned measurements and cross-attention trust modeling
@@ -30,10 +31,10 @@ By the end of this lab, I aim to be able to:
 | Weeks | Dates | Main work | Compute | Finished when |
 | ----: | ----- | --------- | ------- | ------------- |
 | 01–02 | Done | Tensors, autograd, modules and optimization | Laptop | Done |
-| 03 | Nov 2–8 | Data audit; reproducible crop pipeline on the audited dataset | Laptop | [Data audit](reports/data-audit.md) is complete; resume is verified |
-| 04 | Nov 9–15 | ResNet baseline and failure analysis | Laptop | A fresh clone reproduces the baseline |
-| 05–06 | Nov 16–29 | Attention, transformer blocks and small ViT | Laptop | Tests pass; controlled CNN comparison is done |
-| 07–08 | Nov 30–Dec 13 | Pretrained adaptation; AMP and data-loading profiling | Laptop | First tables are in the Project 1 report |
+| 03 | Nov 2–8 | Data audit; reproducible full-image detection pipeline | Laptop | [Data audit](reports/data-audit.md) is complete; resume is verified |
+| 04 | Nov 9–15 | Faster R-CNN baseline and failure analysis | Laptop first, Colab if needed | A fresh clone reproduces the baseline |
+| 05–06 | Nov 16–29 | Attention, transformer blocks and small ViT on crops | Laptop | Tests pass; ViT overfits a tiny batch and trains on crops |
+| 07–08 | Nov 30–Dec 13 | Faster R-CNN vs DETR-family detector; AMP and data-loading profiling | Laptop first, Colab if needed | First tables are in the Project 1 report |
 | 09–10 | Dec 14–27 | Frozen splits, baselines and contrastive pretraining | Rented GPU | Baselines and encoder are saved |
 | 11–12 | Dec 28–Jan 3 | Linear probes, one ablation and the Project 2 report | Rented GPU | Project 2 report is done |
 | 13 | Jan 4–10 | Driving localization and label-reading baselines | Laptop | Baselines have measured results |
@@ -42,14 +43,14 @@ By the end of this lab, I aim to be able to:
 | 16 | Jan 25–31 | Label-reading LoRA adaptation | Laptop first | Tiny-batch overfit and comparison are done |
 | 17 | Feb 1–7 | Cross-attention trust model and label evaluation | Laptop first | Trust ablation and real-image holdout are done |
 | 18 | Feb 8–14 | Project 3 and 4 reports | Laptop | Both reports are done |
-| 19–20 | Feb 15–28 | Two-GPU DDP and one memory study | Rented, 2 GPUs in one machine | Project 1 report is done |
+| 19–20 | Feb 15–28 | Two-GPU DDP on the detector and one memory study | Rented, 2 GPUs in one machine | Project 1 report is done |
 | 21–24 | Mar 1–28 | ML coding, system design, project defense and applications | Laptop | Mock loop and readiness review are done |
 
 Weeks 3–10 moved one week later, and weeks 11–12 share one week to get back on schedule. That leaves no spare time before January, so reduce runs or model size before cutting evaluation.
 
 ### Compute
 
-Development and small experiments run on a laptop RTX 4070 (8 GB). Project 2 and DDP run on rented GPUs, at an estimated $100–200 in total. Check live prices before renting. Checkpoint and resume must work before week 9, because cheap instances can be interrupted. Datasets and runs stay outside OneDrive.
+Development and small experiments run on a laptop RTX 4070 (8 GB). Project 2 and DDP run on rented GPUs, and detector training may need them from week 4. The earlier $100–200 estimate may rise, so recheck it after the week 4 baseline, once training time is measured. Check live prices before renting. Checkpoint and resume must work before the first rented run, because cheap instances can be interrupted. Datasets and runs stay outside OneDrive.
 
 ---
 
@@ -58,8 +59,8 @@ Development and small experiments run on a laptop RTX 4070 (8 GB). Project 2 and
 | Weeks | Milestone | Status |
 | ----: | --------- | :----: |
 | 01–02 | Tensors, autograd, modules and optimization | ✅ |
-| 03–04 | Data audit, pipeline and ResNet baseline | ⬜ |
-| 05–08 | Small ViT and training measurements | ⬜ |
+| 03–04 | Data audit, pipeline and Faster R-CNN baseline | ⬜ |
+| 05–08 | Small ViT, detector comparison and training measurements | ⬜ |
 | 09–12 | Project 2 report | ⬜ |
 | 13–18 | Project 3 and 4 reports | ⬜ |
 | 19–20 | DDP scaling and Project 1 report | ⬜ |
@@ -91,7 +92,7 @@ The weekly exercises feed into four studies. [PROJECTS.md](PROJECTS.md) defines 
 
 | Project | Research question | Code | Report |
 | ------- | ----------------- | ---- | ------ |
-| Warehouse Recognition & ViT Scaling | How do CNN and ViT training choices affect warehouse object classification, generalization and training cost? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
+| Warehouse Detection & ViT Scaling | How do CNN and transformer training choices affect warehouse object detection, generalization and training cost? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
 | Label-Efficient Warehouse Perception | Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
 | Robust Driving Localization with Learned Visual Measurements | Can a learned matching or relocalization component improve a fixed localization pipeline under visual degradation and sensor misalignment? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
 | Aisle and Rack Label Reading | Can LoRA adaptation read aisle and rack labels better than OCR and a pretrained VLM while preserving quality on unseen strings, layouts and real images? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |

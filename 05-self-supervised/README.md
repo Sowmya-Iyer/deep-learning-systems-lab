@@ -24,7 +24,7 @@ Label-efficient representation learning on warehouse images for [Project 2](../P
 
 ## Done when
 
-- [ ] Accuracy or macro-F1 versus label budget is reported with variation across seeds
+- [ ] Macro-F1 versus label budget is reported with variation across seeds
 - [ ] All three approaches are compared, because beating scratch training alone does not show SSL is useful
 - [ ] Pretraining cost and class-level errors are reported
 - [ ] The report states whether pretraining helped, by how much and under which conditions

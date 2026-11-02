@@ -14,7 +14,7 @@ DDP, memory analysis and optional FSDP for [Project 1](../PROJECTS.md). Weeks 19
 
 ## Done when
 
-- [ ] DDP training runs on the shared `dlsl` pipeline
+- [ ] DDP detector training runs on the shared `dlsl` pipeline
 - [ ] `DistributedSampler` behavior is verified: shards are disjoint and reshuffle each epoch
 - [ ] A checkpoint saved under DDP resumes correctly
 - [ ] Throughput, time-to-target quality, scaling efficiency and cost are measured
@@ -24,7 +24,7 @@ DDP, memory analysis and optional FSDP for [Project 1](../PROJECTS.md). Weeks 19
 
 Multi-GPU claims require measured GPU runs. Debug on the laptop with `gloo` or a single process before renting, then rent one machine for the whole measurement so every row shares the same hardware. Use four GPUs only if the two-GPU result justifies it.
 
-| GPUs | Global batch | Samples/second | Time to target | Peak memory/GPU | Scaling efficiency | Cost |
+| GPUs | Global batch | Images/second | Time to target | Peak memory/GPU | Scaling efficiency | Cost |
 | ---: | -----------: | -------------: | -------------: | --------------: | -----------------: | ---: |
 |    1 |            — |              — |              — |               — |               100% |    — |
 |    2 |            — |              — |              — |               — |                  — |    — |

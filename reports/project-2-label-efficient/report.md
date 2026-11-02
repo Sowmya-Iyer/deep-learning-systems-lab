@@ -18,7 +18,7 @@ Dataset, splits, models compared, and what was held constant.
 
 ## Results
 
-| Config | Label budget | Accuracy or macro-F1 | Variation across seeds | Pretraining cost |
+| Config | Label budget | Macro-F1 | Variation across seeds | Pretraining cost |
 | ------ | --- | --- | --- | --- |
 | Scratch | — | — | — | — |
 | External pretrained | — | — | — | — |

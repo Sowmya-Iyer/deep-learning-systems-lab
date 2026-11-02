@@ -4,7 +4,7 @@ The source of truth for what this repository must deliver. Four studies apply th
 
 | # | Project | Weeks | Code | Report |
 | - | ------- | ----- | ---- | ------ |
-| 1 | Warehouse Recognition & ViT Scaling | 3-8, 19-20 | [training-pipeline](01-pytorch-fundamentals/training-pipeline/), [03-transformers](03-transformers/), [04-distributed](04-distributed/) | [report](reports/project-1-vit-scaling/report.md) |
+| 1 | Warehouse Detection & ViT Scaling | 3-8, 19-20 | [training-pipeline](01-pytorch-fundamentals/training-pipeline/), [03-transformers](03-transformers/), [04-distributed](04-distributed/) | [report](reports/project-1-vit-scaling/report.md) |
 | 2 | Label-Efficient Warehouse Perception | 9-12 | [05-self-supervised](05-self-supervised/) | [report](reports/project-2-label-efficient/report.md) |
 | 3 | Robust Driving Localization with Learned Visual Measurements | 13-15, 17-18 | [06-multimodal/video-sensor](06-multimodal/video-sensor/) | [report](reports/project-3-video-sensor/report.md) |
 | 4 | Aisle and Rack Label Reading | 13, 16-18 | [06-multimodal/vision-language](06-multimodal/vision-language/) | [report](reports/project-4-vision-language/report.md) |
@@ -19,23 +19,23 @@ The source of truth for what this repository must deliver. Four studies apply th
 
 ---
 
-## Project 1: Warehouse Recognition & ViT Scaling
+## Project 1: Warehouse Detection & ViT Scaling
 
-**Objective.** Implement, train, debug, profile and scale a modern deep learning model on warehouse objects.
+**Objective.** Implement, train, debug, profile and scale modern deep learning models that find warehouse objects in full images.
 
-**Research question.** How do CNN and ViT training choices affect warehouse object classification, generalization and training cost?
+**Research question.** How do CNN and transformer training choices affect warehouse object detection, generalization and training cost?
 
-**Build: foundation.** Create a reusable PyTorch pipeline with configs, data splits, train/eval, logging, checkpoints, resume and reproducible evaluation. Establish a CNN/ResNet baseline on LOCO object crops, unless LOCO fails the week 3 [data audit](reports/data-audit.md) and BDD100K or nuImages replaces it for Projects 1 and 2. Split source images or sequences before generating crops, and audit class counts before choosing classes.
+**Build: foundation.** Create a reusable PyTorch pipeline with configs, data splits, train/eval, logging, checkpoints, resume and reproducible evaluation. Establish a pretrained Faster R-CNN baseline on full LOCO images, using the frozen subset split in the [data audit](reports/data-audit.md). Check for unlabeled objects before trusting false-positive counts.
 
-**Build: models.** Implement attention, multi-head attention, transformer blocks, patch embeddings and a small ViT. Compare pretrained CNN and ViT models separately, as a transfer-learning study rather than a pure architecture comparison.
+**Build: models.** Implement attention, multi-head attention, transformer blocks, patch embeddings and a small ViT, and test the ViT on object crops. Then compare Faster R-CNN with a pretrained DETR-family detector, as a transfer-learning study rather than a pure architecture comparison. Drop the DETR comparison before cutting evaluation if the schedule slips.
 
-**Build: systems.** Measure AMP, batch size, data loading and gradient accumulation. Add DDP in weeks 19-20 with two GPUs; verify sampler/checkpoint behavior. Four GPUs are conditional on a useful two-GPU result. Measure activation checkpointing; FSDP is conditional.
+**Build: systems.** Measure AMP, batch size, data loading and gradient accumulation. Add DDP to the detector in weeks 19-20 with two GPUs; verify sampler/checkpoint behavior. Four GPUs are conditional on a useful two-GPU result. Measure activation checkpointing; FSDP is conditional.
 
-**Metrics.** Macro-F1; per-class recall; confusion matrices; accuracy; training time; samples/second; peak GPU memory; time-to-target quality; scaling efficiency; cost.
+**Metrics.** mAP@50; mAP@50:95; per-class AP; recall; small-object AP; false positives per image; inference latency; training time; images/second; peak GPU memory; time-to-target quality; scaling efficiency; cost.
 
 **Completion criteria.** A fresh user can reproduce a baseline, resume training and inspect fair comparisons. Explain what improved and its tradeoffs. The small ViT need not beat a pretrained model.
 
-**Scope and interview defense.** This is object-crop classification, not full-scene detection. Multi-GPU claims require measured runs on rented GPUs. Explain unstable training, bottlenecks, numerical behavior and distributed choices. One focused CUDA kernel is an optional extension.
+**Scope and interview defense.** This is detection on five LOCO classes. Forklift is reported with a warning because it has few boxes and only 5 in validation, so it cannot be tuned on. Published LOCO scores use a different split, so they are a reference, not a direct comparison. Multi-GPU claims require measured runs on rented GPUs. Explain unstable training, bottlenecks, numerical behavior and distributed choices. One focused CUDA kernel is an optional extension.
 
 ---
 
@@ -45,17 +45,17 @@ The source of truth for what this repository must deliver. Four studies apply th
 
 **Research question.** Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels?
 
-**Build: baselines.** Freeze train/validation/test splits and nested, class-stratified label subsets. Train from scratch and fine-tune an externally pretrained encoder at each label budget. Pretrain one manageable contrastive encoder on training images without labels.
+**Build: baselines.** Use object crops from the Project 1 split, so that 27 runs across approaches, budgets and seeds stay affordable. Freeze nested, class-stratified label subsets. Train from scratch and fine-tune an externally pretrained encoder at each label budget. Pretrain one manageable contrastive encoder on training images without labels.
 
 **Build: evaluation.** Linear-probe the frozen encoder, then fine-tune it. Keep downstream splits and evaluation rules consistent across all three approaches.
 
 **Build: ablations.** Vary one or two factors such as augmentation strength or pretraining duration. Use at least 3 seeds for key comparisons when feasible; record any compute limitation.
 
-**Metrics.** Accuracy or macro-F1 versus label budget; variation across seeds; pretraining cost; class-level errors; optional domain-shift evaluation.
+**Metrics.** Macro-F1 versus label budget; variation across seeds; pretraining cost; class-level errors; optional domain-shift evaluation.
 
 **Completion criteria.** A reproducible report states whether pretraining helped, by how much and under which conditions. Keep validation/test images out of pretraining unless explicitly defining a transductive study.
 
-**Scope and interview defense.** Complete one method deeply. MAE, DINO training and auto-labeling are extensions. Label efficiency within a domain and new-site adaptation are separate claims; make the second only with a held-out site. Defend the hypothesis, controls, negative results and uncertainty.
+**Scope and interview defense.** Complete one method deeply. Crop results do not show detection performance. Testing the pretrained encoder in a detector at the 10% budget is an extension. MAE, DINO training and auto-labeling are extensions. Label efficiency within a domain and new-site adaptation are separate claims; make the second only with a held-out site. Defend the hypothesis, controls, negative results and uncertainty.
 
 ---
 

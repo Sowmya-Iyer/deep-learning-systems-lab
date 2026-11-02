@@ -13,15 +13,16 @@ Week 3, bounded to a few hours. Confirm these facts from each dataset's own page
 
 ## Decisions
 
-- **Project 1 and 2 classes and split unit:** Pallet, small load carrier, stillage and pallet truck, split by LOCO subset using [loco_split.json](loco_split.json). Forklift is an exploratory result only.
-- **LOCO, keep or replace:** Keep. All four classes pass the rule with this split.
+- **Project 1 classes and split unit:** Detection on all five classes, split by LOCO subset using [loco_split.json](loco_split.json). Forklift is reported with a warning, and is not used for tuning.
+- **Project 2 classes and split unit:** Crops of pallet, small load carrier, stillage and pallet truck, with the same split and the 32-pixel filter.
+- **LOCO, keep or replace:** Keep. All four Project 2 classes pass the rule with this split.
 - **Project 3 dataset:** —
 - **Project 3 reference-pose description:** —
 - **Odometry source:** real or simulated, with reason —
 - **Project 4 synthetic label source:** —
 - **Project 4 real-image holdout source:** —
 
-**LOCO rule.** Keep LOCO if at least three useful classes each have 500 training crops and 100 test crops after splitting. That leaves 50 examples per class at the 10% label budget. Otherwise, replace it with BDD100K or nuImages for Projects 1 and 2, and rename those projects to match. Decide by Nov 8.
+**LOCO rule.** This rule was written for crops, and now applies to Project 2. Keep LOCO if at least three useful classes each have 500 training crops and 100 test crops after splitting. That leaves 50 examples per class at the 10% label budget. Otherwise, replace it with BDD100K or nuImages for Projects 1 and 2, and rename those projects to match. Decide by Nov 8.
 
 Download only a few RobotCar traverses, and record their total size here.
 
@@ -73,9 +74,22 @@ The chosen split is train 2, 4, 5; validation 1; test 3. Subsets 1 and 3 were ch
 
 The smallest main class has 181 training crops at the 10% label budget. Forklift fails the rule in every split tested, and has only 5 validation crops here.
 
+### Boxes for detection
+
+Project 1 keeps the small boxes, so it uses unfiltered counts:
+
+| Split | Pallet | Small load carrier | Stillage | Pallet truck | Forklift |
+| ----- | -----: | -----------------: | -------: | -----------: | -------: |
+| Train | 83,722 | 10,959 | 3,027 | 1,925 | 405 |
+| Validation | 13,275 | 8,911 | 1,978 | 594 | 5 |
+| Test | 23,448 | 2,281 | 402 | 308 | 188 |
+
+Of the 151,428 boxes, 43% are under 32 pixels on their shorter side, so report small-object results separately.
+
 ### Limits
 
 - **Test difficulty.** Test comes from a subset the model never trained on, so scores may be lower than with a random split. Name it a held-out subset result, and confirm what each subset contains before calling it a new site.
 - **Imbalance.** Pallets are 80% of training crops, so report macro-F1 and per-class recall, and consider capping pallet crops.
 - **Duplicates.** Source paths do not overlap between subsets, but visual duplicates were not checked.
+- **Unlabeled objects.** If objects were left unlabeled, correct detections count as false positives. Check a sample of images in week 4.
 - **Unfinished checks.** No crops have been extracted or viewed, and sequence identity within a subset is unknown. Do not split within a subset without it.

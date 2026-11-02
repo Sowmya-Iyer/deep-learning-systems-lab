@@ -28,21 +28,22 @@ Planned modules in `src/dlsl/`:
 | Module | Responsibility |
 | ------ | -------------- |
 | `config.py` | Load an experiment config; save the resolved copy into the run directory |
-| `data.py` | Build datasets and frozen train/validation/test splits |
+| `data.py` | Build COCO-format full-image datasets, crop datasets, and frozen train/validation/test splits |
+| `metrics.py` | COCO mAP, per-class AP, recall and false positives per image |
 | `engine.py` | Train and evaluation loops, AMP, gradient accumulation |
 | `checkpoint.py` | Save and resume model, optimizer, scheduler, scaler, RNG and epoch |
-| `logging.py` | Per-step and per-epoch metrics, samples/second, peak GPU memory |
+| `logging.py` | Per-step and per-epoch metrics, images/second, peak GPU memory |
 | `seed.py` | Seeding and deterministic settings |
 
 ## Conventions
 
 - **Runs.** Each run writes to `runs/<experiment>/<timestamp>/`: resolved config, metrics, checkpoints, and the hardware, precision, batch size and training budget. `runs/` is not committed; final numbers are copied into [`reports/`](../../reports/).
 - **Data.** Keep datasets and runs outside OneDrive. Read the location from a config value or a `DATA_ROOT` environment variable, not a hard-coded path, so the same config runs on the laptop and on rented GPUs.
-- **Rented GPUs.** Instances can be interrupted and their disks disappear. Resume must work before week 9, and checkpoints must be copied off the instance as training runs.
+- **Rented GPUs.** Instances can be interrupted and their disks disappear. Resume must work before the first rented run, and checkpoints must be copied off the instance as training runs.
 
 ## Done when
 
-- [ ] A CNN/ResNet baseline trains on LOCO crops from a single config
+- [ ] A pretrained Faster R-CNN baseline trains on full LOCO images from a single config
 - [ ] Interrupted training resumes and continues the same run
 - [ ] Evaluation of a saved checkpoint reproduces the logged metrics
 - [ ] A fresh clone can do all of the above from this README

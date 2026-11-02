@@ -1,6 +1,6 @@
-# Project 1: Warehouse Recognition & ViT Scaling
+# Project 1: Warehouse Detection & ViT Scaling
 
-**Research question.** How do CNN and ViT training choices affect warehouse object classification, generalization and training cost?
+**Research question.** How do CNN and transformer training choices affect warehouse object detection, generalization and training cost?
 
 ## Summary
 
@@ -18,9 +18,9 @@ Dataset, splits, models compared, and what was held constant.
 
 ## Results
 
-| Config | Macro-F1 | Lowest per-class recall | Accuracy | Training time | Samples/second | Peak GPU memory | Time to target | Cost |
-| ------ | --- | --- | --- | --- | --- | --- | --- | --- |
-| — | — | — | — | — | — | — | — | — |
+| Config | mAP@50 | mAP@50:95 | Lowest per-class AP | Recall | Small-object AP | False positives per image | Latency | Training time | Images/second | Peak GPU memory | Time to target | Cost |
+| ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| — | — | — | — | — | — | — | — | — | — | — | — | — |
 
 ## Analysis
 
@@ -38,8 +38,10 @@ Commands and configs that regenerate the tables above.
 
 Questions to answer without notes:
 
-- Why is this crop classification and not detection?
-- How did splitting before cropping prevent leakage?
+- Why split by LOCO subset, and what does a held-out subset show?
+- How do mAP, recall and false positives each describe a different failure?
+- How do unlabeled objects affect the false-positive count?
+- Why is the forklift result unreliable?
 - What made training unstable, and how was it diagnosed?
 - Where was the bottleneck, and what evidence shows it?
 - What numerical behavior did AMP introduce?
