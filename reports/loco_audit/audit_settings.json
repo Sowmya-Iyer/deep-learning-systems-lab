@@ -1,0 +1,14 @@
+{
+  "min_side": 32.0,
+  "assignment": {
+    "1": "validation",
+    "2": "train",
+    "3": "test",
+    "4": "train",
+    "5": "train"
+  },
+  "source_images": 5097,
+  "boxes_before": 151428,
+  "boxes_after": 86599,
+  "invalid_boxes": 0
+}

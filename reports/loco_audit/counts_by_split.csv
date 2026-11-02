@@ -1,0 +1,16 @@
+split,class_name,before,after
+train,forklift,405,391
+train,pallet,83722,43582
+train,pallet_truck,1925,1812
+train,small_load_carrier,10959,6267
+train,stillage,3027,2354
+validation,forklift,5,5
+validation,pallet,13275,6967
+validation,pallet_truck,594,533
+validation,small_load_carrier,8911,4646
+validation,stillage,1978,1695
+test,forklift,188,187
+test,pallet,23448,16217
+test,pallet_truck,308,253
+test,small_load_carrier,2281,1355
+test,stillage,402,335

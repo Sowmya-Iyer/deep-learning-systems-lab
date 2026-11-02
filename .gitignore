@@ -1,8 +1,11 @@
+# Datasets
+loco/
+reports/loco_audit/crop_manifest.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
 *$py.class
-
 # C extensions
 *.so
 
