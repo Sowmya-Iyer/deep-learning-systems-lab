@@ -52,7 +52,7 @@ u = 10* new_x + 5
 L = u**2
 
 L.backward()
-print(x.grad) # tensor(1100.)
+print(new_x.grad) # tensor(1100.)
 
 
 x = torch.tensor([2., 3.], requires_grad=True)
