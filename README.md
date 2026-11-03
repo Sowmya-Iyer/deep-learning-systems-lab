@@ -17,7 +17,7 @@ By the end of this lab, I aim to be able to:
 * Implement Transformer and Vision Transformer components from first principles
 * Train, evaluate and scale object detectors on full warehouse images
 * Design controlled experiments, with fair baselines, seeds and honest claims
-* Reduce labeling needs through self-supervised pretraining
+* Reduce labeling needs for free-space segmentation through self-supervised pretraining
 * Improve visual localization with learned measurements and cross-attention trust modeling
 * Adapt a small vision-language model to read warehouse labels without hallucinating
 * Train across multiple GPUs using DDP, and diagnose memory and data-loading bottlenecks
@@ -35,8 +35,8 @@ By the end of this lab, I aim to be able to:
 | 04 | Nov 9–15 | Faster R-CNN baseline and failure analysis | Laptop first, Colab if needed | A fresh clone reproduces the baseline |
 | 05–06 | Nov 16–29 | Attention, transformer blocks and small ViT on crops | Laptop | Tests pass; ViT overfits a tiny batch and trains on crops |
 | 07–08 | Nov 30–Dec 13 | Faster R-CNN vs DETR-family detector; AMP and data-loading profiling | Laptop first, Colab if needed | First tables are in the Project 1 report |
-| 09–10 | Dec 14–27 | Frozen splits, baselines and contrastive pretraining | Rented GPU | Baselines and encoder are saved |
-| 11–12 | Dec 28–Jan 3 | Linear probes, one ablation and the Project 2 report | Rented GPU | Project 2 report is done |
+| 09–10 | Dec 14–27 | Free-space splits, segmentation baselines and contrastive pretraining | Rented GPU | Baselines and encoder are saved |
+| 11–12 | Dec 28–Jan 3 | Frozen-encoder and fine-tuned segmentation, one ablation and the Project 2 report | Rented GPU | Project 2 report is done |
 | 13 | Jan 4–10 | Driving localization and label-reading baselines | Laptop | Baselines have measured results |
 | 14 | Jan 11–17 | One learned visual measurement | Laptop first | Classical and learned are compared |
 | 15 | Jan 18–24 | Localization robustness | Laptop | Real-condition and simulated-corruption tables are finished |
@@ -93,7 +93,7 @@ The weekly exercises feed into four studies. [PROJECTS.md](PROJECTS.md) defines 
 | Project | Research question | Code | Report |
 | ------- | ----------------- | ---- | ------ |
 | Warehouse Detection & ViT Scaling | How do CNN and transformer training choices affect warehouse object detection, generalization and training cost? | `01`, `03`, `04` | [report](reports/project-1-vit-scaling/report.md) |
-| Label-Efficient Warehouse Perception | Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
+| Label-Efficient Free-Space Segmentation | Does driving-domain self-supervised pretraining improve free-space segmentation over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels? | `05` | [report](reports/project-2-label-efficient/report.md) |
 | Robust Driving Localization with Learned Visual Measurements | Can a learned matching or relocalization component improve a fixed localization pipeline under visual degradation and sensor misalignment? | `06/video-sensor` | [report](reports/project-3-video-sensor/report.md) |
 | Aisle and Rack Label Reading | Can LoRA adaptation read aisle and rack labels better than OCR and a pretrained VLM while preserving quality on unseen strings, layouts and real images? | `06/vision-language` | [report](reports/project-4-vision-language/report.md) |
 

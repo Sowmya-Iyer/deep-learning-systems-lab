@@ -4,25 +4,25 @@ Week 3, bounded to a few hours. Confirm these facts from each dataset's own page
 
 | Dataset | Used for | Check first | Notes so far | License | Size | Decision |
 | ------- | -------- | ----------- | ------------ | ------- | ---: | -------- |
-| [LOCO](https://github.com/tum-fml/loco) | Projects 1, 2 | Crop counts after splitting, split unit, usable crop size | 37,988 images, 5,593 labeled, 5 environments. Details in [LOCO audit](#loco-audit) | CC0 1.0 | 37,988 images; GB to confirm | Keep, with four classes and a custom split |
+| [LOCO](https://github.com/tum-fml/loco) | Project 1 | Crop counts after splitting, split unit, usable crop size | 37,988 images, 5,593 labeled, 5 environments. Details in [LOCO audit](#loco-audit) | CC0 1.0 | 37,988 images; GB to confirm | Keep, with a custom split |
 | [Oxford RobotCar](https://robotcar-dataset.robots.ox.ac.uk/) | Project 3, first choice | Is download access open? Which traverses have [RTK ground truth](https://arxiv.org/abs/2002.10152)? What odometry can the EKF use? Which few traverses cover different conditions? | Registration required. RTK release terms still to confirm | CC BY-NC-SA 4.0 per the site | — | — |
 | [KITTI Odometry](https://www.cvlibs.net/datasets/kitti/eval_odometry.php) | Project 3, fallback | What are the license and official download sizes? Do the raw recordings supply usable IMU data? | Poses are published for sequences 00–10. Less change in weather and light, so it answers the condition question less well | — | — | — |
-| [BDD100K](https://bair.berkeley.edu/blog/2018/05/30/bdd/) | Projects 1, 2, fallback | What do the official terms say? Sources disagree | Use only if LOCO fails the rule below | — | — | — |
-| [nuImages](https://www.nuscenes.org/nuimages) | Projects 1, 2, fallback | What are the license and download size? | Use only if LOCO fails the rule below | — | — | — |
+| [BDD100K](https://bair.berkeley.edu/blog/2018/05/30/bdd/) | Project 2, first choice | What do the official terms say? Sources disagree. How many images have drivable-area masks, and are test labels public? Which weather and time-of-day tags exist? | Drivable-area labels, plus object boxes for checking free space inside objects | — | — | — |
+| [nuImages](https://www.nuscenes.org/nuimages) | Project 2, fallback | What are the license and download size? Does it label a drivable surface? | Use if BDD100K terms or labels do not fit | — | — | — |
 | [SimReady Warehouse](https://hyper.ai/en/datasets/nvidia-physical-ai-simready-warehouse-openusd) | Project 4 | Can it render readable labels? | Synthetic 3D assets | — | — | — |
 
 ## Decisions
 
 - **Project 1 classes and split unit:** Detection on all five classes, split by LOCO subset using [loco_split.json](loco_split.json). Forklift is reported with a warning, and is not used for tuning.
-- **Project 2 classes and split unit:** Crops of pallet, small load carrier, stillage and pallet truck, with the same split and the 32-pixel filter.
-- **LOCO, keep or replace:** Keep. All four Project 2 classes pass the rule with this split.
+- **LOCO, keep or replace:** Keep for Project 1.
+- **Project 2 dataset, splits and label subsets:** —
 - **Project 3 dataset:** —
 - **Project 3 reference-pose description:** —
 - **Odometry source:** real or simulated, with reason —
 - **Project 4 synthetic label source:** —
 - **Project 4 real-image holdout source:** —
 
-**LOCO rule.** This rule was written for crops, and now applies to Project 2. Keep LOCO if at least three useful classes each have 500 training crops and 100 test crops after splitting. That leaves 50 examples per class at the 10% label budget. Otherwise, replace it with BDD100K or nuImages for Projects 1 and 2, and rename those projects to match. Decide by Nov 8.
+**LOCO rule.** This rule decided whether to keep LOCO when Project 2 used crops. Project 2 now uses free-space segmentation, but the crop counts below still describe the data, and the small ViT in Project 1 uses these crops. Keep LOCO if at least three useful classes each have 500 training crops and 100 test crops after splitting. That leaves 50 examples per class at the 10% label budget. Otherwise, replace it with BDD100K or nuImages for Projects 1 and 2, and rename those projects to match. Decide by Nov 8.
 
 Download only a few RobotCar traverses, and record their total size here.
 
@@ -44,7 +44,7 @@ python audit_loco.py --repo ../loco --min-side 32 --split-file loco_split.json -
 | LOCO class table, summed | — | 151,068 |
 | Annotation files, as counted | 5,097 | 151,428 |
 
-The three sources disagree, and the cause is unknown. This audit uses the annotation files. The 496 image difference also changes the unlabeled count for Project 2, so check that before pretraining.
+The three sources disagree, and the cause is unknown. This audit uses the annotation files. The 496-image difference also changes the unlabeled image count.
 
 ### Filtering
 

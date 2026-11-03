@@ -1,6 +1,6 @@
-# Project 2: Label-Efficient Warehouse Perception
+# Project 2: Label-Efficient Free-Space Segmentation
 
-**Research question.** Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels?
+**Research question.** Does driving-domain self-supervised pretraining improve free-space segmentation over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels?
 
 ## Summary
 
@@ -18,12 +18,12 @@ Dataset, splits, models compared, and what was held constant.
 
 ## Results
 
-| Config | Label budget | Macro-F1 | Variation across seeds | Pretraining cost |
-| ------ | --- | --- | --- | --- |
-| Scratch | — | — | — | — |
-| External pretrained | — | — | — | — |
-| Warehouse SSL, linear probe | — | — | — | — |
-| Warehouse SSL, fine-tuned | — | — | — | — |
+| Config | Label budget | Free-space IoU | Boundary accuracy | Free space inside objects | Night and bad-weather IoU | Variation across seeds | Pretraining cost |
+| ------ | --- | --- | --- | --- | --- | --- | --- |
+| Scratch | — | — | — | — | — | — | — |
+| External pretrained | — | — | — | — | — | — | — |
+| Driving SSL, frozen encoder | — | — | — | — | — | — | — |
+| Driving SSL, fine-tuned | — | — | — | — | — | — | — |
 
 ## Analysis
 
@@ -44,5 +44,6 @@ Questions to answer without notes:
 - What was the hypothesis, and what result would have refuted it?
 - Why is the external pretrained baseline necessary?
 - What controls make the comparisons fair?
-- Do these results show label efficiency, new-site adaptation, or both?
+- Do these results show label efficiency, adaptation to new conditions, or both?
+- Why is free-space IoU not enough on its own, and which errors matter most near obstacles?
 - What negative results appeared, and how uncertain are the conclusions?

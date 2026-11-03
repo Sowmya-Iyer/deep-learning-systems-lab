@@ -5,7 +5,7 @@ The source of truth for what this repository must deliver. Four studies apply th
 | # | Project | Weeks | Code | Report |
 | - | ------- | ----- | ---- | ------ |
 | 1 | Warehouse Detection & ViT Scaling | 3-8, 19-20 | [training-pipeline](01-pytorch-fundamentals/training-pipeline/), [03-transformers](03-transformers/), [04-distributed](04-distributed/) | [report](reports/project-1-vit-scaling/report.md) |
-| 2 | Label-Efficient Warehouse Perception | 9-12 | [05-self-supervised](05-self-supervised/) | [report](reports/project-2-label-efficient/report.md) |
+| 2 | Label-Efficient Free-Space Segmentation | 9-12 | [05-self-supervised](05-self-supervised/) | [report](reports/project-2-label-efficient/report.md) |
 | 3 | Robust Driving Localization with Learned Visual Measurements | 13-15, 17-18 | [06-multimodal/video-sensor](06-multimodal/video-sensor/) | [report](reports/project-3-video-sensor/report.md) |
 | 4 | Aisle and Rack Label Reading | 13, 16-18 | [06-multimodal/vision-language](06-multimodal/vision-language/) | [report](reports/project-4-vision-language/report.md) |
 | — | Optional 3D extension | When time allows | [07-3d-vision](07-3d-vision/) | Folder README |
@@ -39,23 +39,23 @@ The source of truth for what this repository must deliver. Four studies apply th
 
 ---
 
-## Project 2: Label-Efficient Warehouse Perception
+## Project 2: Label-Efficient Free-Space Segmentation
 
-**Objective.** Design and evaluate representation-learning experiments when warehouse labels are limited.
+**Objective.** Design and evaluate representation-learning experiments for free-space segmentation, where pixel labels are slow and expensive to make. Free space answers where a vehicle can safely go, which extends obstacle detection toward scene understanding.
 
-**Research question.** Does warehouse-domain self-supervised pretraining improve downstream performance over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels?
+**Research question.** Does driving-domain self-supervised pretraining improve free-space segmentation over scratch training and an external pretrained encoder at 10%, 25% and 100% of training labels?
 
-**Build: baselines.** Use object crops from the Project 1 split, so that 27 runs across approaches, budgets and seeds stay affordable. Freeze nested, class-stratified label subsets. Train from scratch and fine-tune an externally pretrained encoder at each label budget. Pretrain one manageable contrastive encoder on training images without labels.
+**Build: baselines.** Use BDD100K drivable-area labels if the [data audit](reports/data-audit.md) confirms its terms. Freeze train, validation and test splits, and nested label subsets balanced across weather and time of day. Train from scratch and fine-tune an externally pretrained encoder at each label budget, with the same light segmentation head. Pretrain one manageable contrastive encoder on training images without labels. Use a reduced image resolution, so that 27 runs across approaches, budgets and seeds stay affordable.
 
-**Build: evaluation.** Linear-probe the frozen encoder, then fine-tune it. Keep downstream splits and evaluation rules consistent across all three approaches.
+**Build: evaluation.** Train only the segmentation head on the frozen encoder, then fine-tune the whole model. Keep downstream splits and evaluation rules consistent across all three approaches.
 
 **Build: ablations.** Vary one or two factors such as augmentation strength or pretraining duration. Use at least 3 seeds for key comparisons when feasible; record any compute limitation.
 
-**Metrics.** Macro-F1 versus label budget; variation across seeds; pretraining cost; class-level errors; optional domain-shift evaluation.
+**Metrics.** Free-space IoU versus label budget; boundary accuracy; free space wrongly predicted inside labeled vehicles and pedestrians; variation across seeds; pretraining cost; results by weather and time of day.
 
 **Completion criteria.** A reproducible report states whether pretraining helped, by how much and under which conditions. Keep validation/test images out of pretraining unless explicitly defining a transductive study.
 
-**Scope and interview defense.** Complete one method deeply. Crop results do not show detection performance. Testing the pretrained encoder in a detector at the 10% budget is an extension. MAE, DINO training and auto-labeling are extensions. Label efficiency within a domain and new-site adaptation are separate claims; make the second only with a held-out site. Defend the hypothesis, controls, negative results and uncertainty.
+**Scope and interview defense.** Complete one method deeply. Free-space masks here are learned from labels, not checked against a vehicle's path, so this is not a driving safety function. If the 25% budget or a seed must go to save time, cut it before cutting evaluation. Fine-tuning the Project 1 detector from this encoder is an extension. MAE, DINO training and auto-labeling are extensions. Label efficiency and adaptation to new conditions are separate claims; make the second only with held-out conditions. Defend the hypothesis, controls, negative results and uncertainty.
 
 ---
 
