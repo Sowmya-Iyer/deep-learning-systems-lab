@@ -23,7 +23,7 @@ training-pipeline/
 └── src/dlsl/         # shared code
 ```
 
-Planned modules in `src/dlsl/`:
+Planned modules in `src/dlsl/`. [design.md](design.md) outlines what each file contains, including the `data/` and `models/` subpackages:
 
 | Module | Responsibility |
 | ------ | -------------- |

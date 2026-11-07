@@ -1,0 +1,38 @@
+experiment: frcnn_r50_baseline
+seed: 0
+
+data:
+  annotations: ${REPO_ROOT}/loco/rgb        # the cloned LOCO repo, not committed
+  images: ${DATA_ROOT}/loco                 # downloaded images, outside OneDrive
+  split_file: ${REPO_ROOT}/reports/loco_split.json
+  subset_size: null                         # e.g. 16 for the overfit check
+  num_workers: 4
+  pin_memory: true
+
+model:
+  name: fasterrcnn_resnet50_fpn_v2
+  weights: COCO_V1
+  num_classes: 6                            # 5 LOCO classes + background
+  min_size: 800
+  max_size: 1333
+  trainable_backbone_layers: 3
+
+optim: {name: sgd, lr: 0.01, momentum: 0.9, weight_decay: 1.0e-4}
+schedule: {name: cosine, epochs: 16, warmup_iters: 500, warmup_factor: 0.001}
+
+train:
+  batch_size: 2
+  accum_steps: 1
+  amp: true
+  clip_grad_norm: 10.0
+  log_every: 20                             # steps
+  checkpoint_every: 500                     # steps, for interruptible machines
+  eval_every: 1                             # epochs
+
+eval:
+  score_threshold: 0.5                      # for false positives per image only
+  iou_threshold: 0.5
+  select_metric: map_main                   # mAP@50:95 over the four main classes
+
+output:
+  runs_root: ${RUNS_ROOT:-runs}

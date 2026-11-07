@@ -2,6 +2,8 @@
 
 **Research question.** How do CNN and transformer training choices affect warehouse object detection, generalization and training cost?
 
+The work is tracked step by step in the [plan](plan.md).
+
 ## Summary
 
 The answer to the research question, with the main numbers.

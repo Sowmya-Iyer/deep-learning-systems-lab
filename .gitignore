@@ -1,6 +1,7 @@
 # Datasets
 loco/
 reports/loco_audit/crop_manifest.csv
+bdd100k/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
